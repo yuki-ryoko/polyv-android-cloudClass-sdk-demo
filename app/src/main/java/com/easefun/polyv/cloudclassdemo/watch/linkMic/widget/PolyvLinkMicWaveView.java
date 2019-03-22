@@ -141,6 +141,13 @@ public class PolyvLinkMicWaveView extends View {
         mLastCreateTime = currentTime;
     }
 
+    public void setInterpolator(Interpolator interpolator) {
+        mInterpolator = interpolator;
+        if (mInterpolator == null) {
+            mInterpolator = new LinearInterpolator();
+        }
+    }
+
     private class Circle {
         private long mCreateTime;
 
@@ -156,13 +163,6 @@ public class PolyvLinkMicWaveView extends View {
         float getCurrentRadius() {
             float percent = (System.currentTimeMillis() - mCreateTime) * 1.0f / mDuration;
             return mInitialRadius + mInterpolator.getInterpolation(percent) * (mMaxRadius - mInitialRadius);
-        }
-    }
-
-    public void setInterpolator(Interpolator interpolator) {
-        mInterpolator = interpolator;
-        if (mInterpolator == null) {
-            mInterpolator = new LinearInterpolator();
         }
     }
 }

@@ -68,37 +68,6 @@ import static com.easefun.polyv.cloudclass.PolyvSocketEvent.ONSLICEID;
 public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
         implements View.OnClickListener, IPolyvHomeProtocol {
 
-    // <editor-fold defaultstate="collapsed" desc="成员变量">
-    private LinearLayout chatTopSelectLayout;
-    private LinearLayout chatContainerLayout;
-    private RelativeLayout personalChatItemLayout;
-    private RelativeLayout groupChatItemLayout;
-    private FrameLayout playerContainer, imageViewerContainer, chatEditContainer;
-    private ViewPager chatViewPager;
-    private PolyvChatFragmentAdapter chatPagerAdapter;
-    private View lastView;
-
-    //直播与点播辅助类
-    private PolyvCloudClassVideoHelper livePlayerHelper;
-    private PolyvCommonVideoHelper vodVideoHelper;
-    private PolyvSlideSwitchView polyvSlideSwitch;
-
-    private String userId, channelId, videoId;
-
-    private PolyvTouchContainerView videoPptContainer;
-    //聊天室管理类
-    private PolyvChatManager chatManager = new PolyvChatManager();
-
-    //答题相关
-    private PolyvAnswerView answerView;
-    private ViewGroup answerContainer;
-
-    //连麦相关
-    private LinearLayout linkMicLayout;
-    private IPolyvRotateBaseView linkMicLayoutParent;
-    private ViewStub linkMicStub;
-    private View linkMicStubView;
-
     //参数传递相关标签
     private static final String TAG = "PolyvCloudClassHomeActivity";
     private static final String CHANNELID_KEY = "channelid";
@@ -108,9 +77,33 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
     private static final String NORMALLIVE = "normallive";
     private static final String NORMALLIVE_PLAYBACK = "normallive_playback";
     private static final String DEFAULT_NICKNAME = "POLYV";
+    // <editor-fold defaultstate="collapsed" desc="成员变量">
+    private LinearLayout chatTopSelectLayout;
+    private LinearLayout chatContainerLayout;
+    private RelativeLayout personalChatItemLayout;
+    private RelativeLayout groupChatItemLayout;
+    private FrameLayout playerContainer, imageViewerContainer, chatEditContainer;
+    private ViewPager chatViewPager;
+    private PolyvChatFragmentAdapter chatPagerAdapter;
+    private View lastView;
+    //直播与点播辅助类
+    private PolyvCloudClassVideoHelper livePlayerHelper;
+    private PolyvCommonVideoHelper vodVideoHelper;
+    private PolyvSlideSwitchView polyvSlideSwitch;
+    private String userId, channelId, videoId;
+    private PolyvTouchContainerView videoPptContainer;
+    //聊天室管理类
+    private PolyvChatManager chatManager = new PolyvChatManager();
+    //答题相关
+    private PolyvAnswerView answerView;
+    private ViewGroup answerContainer;
+    //连麦相关
+    private LinearLayout linkMicLayout;
+    private IPolyvRotateBaseView linkMicLayoutParent;
+    private ViewStub linkMicStub;
+    private View linkMicStubView;
 
     //直播与点播类型选择
-
     @PolyvPlayOption.PlayMode
     private int playMode;
 
@@ -119,7 +112,7 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
     private PolyvOrientoinListener orientoinListener;
 
     //是否是普通直播  是否直播回放
-    private boolean isNormalLive,isNormalLivePlayBack;
+    private boolean isNormalLive, isNormalLivePlayBack;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="入口">
@@ -132,7 +125,7 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
         activity.startActivity(intent);
     }
 
-    public static void startActivityForPlayBack(Activity activity, String videoId,boolean isNormalLivePlayBack) {
+    public static void startActivityForPlayBack(Activity activity, String videoId, boolean isNormalLivePlayBack) {
         Intent intent = new Intent(activity, PolyvCloudClassHomeActivity.class);
         intent.putExtra(VIDEOID_KEY, videoId);
         intent.putExtra(NORMALLIVE_PLAYBACK, isNormalLivePlayBack);
@@ -263,16 +256,16 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
         if (playMode == PolyvPlayOption.PLAYMODE_VOD) {
             return;
         }
-        if(isNormalLive){
+        if (isNormalLive) {
             linkMicStub = findViewById(R.id.polyv_normal_live_link_mic_stub);
-        }else {
+        } else {
             linkMicStub = findViewById(R.id.polyv_link_mic_stub);
         }
-        if(linkMicStubView == null){
+        if (linkMicStubView == null) {
             linkMicStubView = linkMicStub.inflate();
         }
         linkMicLayout = linkMicStubView.findViewById(R.id.link_mic_layout);
-        if(linkMicStubView instanceof IPolyvRotateBaseView){
+        if (linkMicStubView instanceof IPolyvRotateBaseView) {
             linkMicLayoutParent = (IPolyvRotateBaseView) linkMicStubView;
         }
 
@@ -464,7 +457,7 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
     private void initialVodVideo() {
         PolyvVodVideoItem polyvVodVideoItem = new PolyvVodVideoItem(this);
         vodVideoHelper = new PolyvVodVideoHelper(polyvVodVideoItem,
-                isNormalLivePlayBack?null:new PolyvPPTItem<PolyvCloudClassMediaController>(this));
+                isNormalLivePlayBack ? null : new PolyvPPTItem<PolyvCloudClassMediaController>(this));
         vodVideoHelper.addVideoPlayer(playerContainer);
         vodVideoHelper.initConfig(isNormalLivePlayBack);
         vodVideoHelper.addPPT(videoPptContainer);
@@ -475,7 +468,7 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
         polyvBaseVideoParams.setChannelId(channelId);
         polyvBaseVideoParams.buildOptions(PolyvBaseVideoParams.WAIT_AD, true)
                 .buildOptions(PolyvBaseVideoParams.MARQUEE, true)
-                .buildOptions(polyvBaseVideoParams.IS_PPT_PLAY, true);
+                .buildOptions(PolyvBaseVideoParams.IS_PPT_PLAY, true);
         vodVideoHelper.startPlay(polyvBaseVideoParams);
     }
 
@@ -484,7 +477,7 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
         PolyvCloudClassVideoItem cloudClassVideoItem = new PolyvCloudClassVideoItem(this);
 
         livePlayerHelper = new PolyvCloudClassVideoHelper(cloudClassVideoItem,
-                isNormalLive?null:new PolyvPPTItem<PolyvCloudClassMediaController>(this), chatManager);
+                isNormalLive ? null : new PolyvPPTItem<PolyvCloudClassMediaController>(this), chatManager);
         livePlayerHelper.addVideoPlayer(playerContainer);
         livePlayerHelper.initConfig(isNormalLive);
         livePlayerHelper.addPPT(videoPptContainer);
@@ -657,6 +650,35 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
 
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="IPolyvHomePresnter实现">
+    @Override
+    public String getSessionId() {
+        if (playMode == PolyvPlayOption.PLAYMODE_LIVE && livePlayerHelper != null) {
+            if (livePlayerHelper.getVideoView() != null && livePlayerHelper.getVideoView().getModleVO() != null) {
+                return livePlayerHelper.getVideoView().getModleVO().getChannelSessionId();
+            }
+        }
+        return null;
+    }
+    // </editor-fold>
+
+    @Override
+    public void sendDanmu(CharSequence content) {
+        if (livePlayerHelper != null) {
+            livePlayerHelper.sendDanmuMessage(content);
+        }
+    }
+
+    @Override
+    public ViewGroup getImageViewerContainer() {
+        return imageViewerContainer;
+    }
+
+    @Override
+    public ViewGroup getChatEditContainer() {
+        return chatEditContainer;
+    }
+
     // <editor-fold defaultstate="collapsed" desc="屏幕旋转开关监听器">
     private class RotationObserver extends ContentObserver {
         ContentResolver mResolver;
@@ -696,35 +718,6 @@ public class PolyvCloudClassHomeActivity extends PolyvBaseActivity
             }
 
         }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="IPolyvHomePresnter实现">
-    @Override
-    public String getSessionId() {
-        if (playMode == PolyvPlayOption.PLAYMODE_LIVE && livePlayerHelper != null) {
-            if (livePlayerHelper.getVideoView() != null && livePlayerHelper.getVideoView().getModleVO() != null) {
-                return livePlayerHelper.getVideoView().getModleVO().getChannelSessionId();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void sendDanmu(CharSequence content) {
-        if (livePlayerHelper != null) {
-            livePlayerHelper.sendDanmuMessage(content);
-        }
-    }
-
-    @Override
-    public ViewGroup getImageViewerContainer() {
-        return imageViewerContainer;
-    }
-
-    @Override
-    public ViewGroup getChatEditContainer() {
-        return chatEditContainer;
     }
     // </editor-fold>
 

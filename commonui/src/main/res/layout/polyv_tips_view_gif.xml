@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/rl_parent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:id="@+id/rl_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/pb_progress"
@@ -15,7 +15,7 @@
         android:minHeight="8dp"
         android:progress="0"
         android:progressDrawable="@drawable/polyv_sb_bg_drawable"
-        android:thumbOffset="0dp"/>
+        android:thumbOffset="0dp" />
 
     <Button
         android:id="@+id/bt_gif"
@@ -25,5 +25,5 @@
         android:gravity="center"
         android:text="GIF"
         android:textColor="#ffffff"
-        android:textSize="12dp"/>
+        android:textSize="12dp" />
 </RelativeLayout>

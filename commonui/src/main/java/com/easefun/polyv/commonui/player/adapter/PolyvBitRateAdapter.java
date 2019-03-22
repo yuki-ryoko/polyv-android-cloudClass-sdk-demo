@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import com.easefun.polyv.businesssdk.model.video.PolyvBitrateVO;
 import com.easefun.polyv.businesssdk.model.video.PolyvDefinitionVO;
 import com.easefun.polyv.commonui.R;
@@ -20,7 +19,7 @@ public class PolyvBitRateAdapter extends RecyclerView.Adapter<PolyvBitRateAdapte
 
     public PolyvBitRateAdapter(PolyvBitrateVO polyvLiveBitrateVO, Context context) {
         this.context = context;
-        if(polyvLiveBitrateVO != null){
+        if (polyvLiveBitrateVO != null) {
             definitions = polyvLiveBitrateVO.getDefinitions();
         }
 
@@ -48,14 +47,14 @@ public class PolyvBitRateAdapter extends RecyclerView.Adapter<PolyvBitRateAdapte
         holder.bitName.setTag(position);
         holder.bitName.setSelected(definitions.get(position).hasSelected);
 
-        if(onClickListener != null){
+        if (onClickListener != null) {
             holder.bitName.setOnClickListener(onClickListener);
         }
     }
 
     @Override
     public int getItemCount() {
-        if(definitions ==  null || definitions.isEmpty()){
+        if (definitions == null || definitions.isEmpty()) {
             return 0;
         }
         return definitions.size();
@@ -65,18 +64,19 @@ public class PolyvBitRateAdapter extends RecyclerView.Adapter<PolyvBitRateAdapte
         this.onClickListener = onClickListener;
     }
 
-    public void updateBitrates(PolyvBitrateVO polyvLiveBitrateVO){
-        if(polyvLiveBitrateVO != null){
+    public void updateBitrates(PolyvBitrateVO polyvLiveBitrateVO) {
+        if (polyvLiveBitrateVO != null) {
             definitions = polyvLiveBitrateVO.getDefinitions();
         }
     }
+
     class BitViewHolder extends RecyclerView.ViewHolder {
 
         public TextView bitName;
 
         public BitViewHolder(View itemView) {
             super(itemView);
-            bitName = (TextView) itemView.findViewById(R.id.live_bit_name);
+            bitName = itemView.findViewById(R.id.live_bit_name);
         }
 
         public void setBitName(String name) {

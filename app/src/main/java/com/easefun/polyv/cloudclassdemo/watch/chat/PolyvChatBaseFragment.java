@@ -70,8 +70,6 @@ public abstract class PolyvChatBaseFragment extends PolyvBaseFragment {
     //信息删除按钮
     protected ImageView ivMsgDelete;
     protected TextView tvSendMsg;
-    // 表情的文本长度
-    private int emoLength;
     //查看更多信息
     protected TextView unread;
     protected IPolyvHomeProtocol homePresnter;
@@ -83,6 +81,8 @@ public abstract class PolyvChatBaseFragment extends PolyvBaseFragment {
     protected boolean isShowPopupLayout;
     protected ViewGroup currentShowPopupLayout;
     protected int srcViewPagerHeight;
+    // 表情的文本长度
+    private int emoLength;
 
     @Override
     public void loadDataAhead() {
@@ -393,7 +393,7 @@ public abstract class PolyvChatBaseFragment extends PolyvBaseFragment {
         }
     }
 
-    private void changeViewLayoutParams(ViewGroup popupLayout) {
+    private void changeViewLayoutParams(final ViewGroup popupLayout) {
         if (popupLayout == null)
             return;
         if (popupLayout.getHeight() == 0) {

@@ -41,7 +41,6 @@
             android:textSize="12dp" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/bitrate_change_land"
             android:layout_width="@dimen/dm_48"
             android:layout_height="@dimen/dm_48"
@@ -49,7 +48,8 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text="@string/most_definition"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/bt_speed_land"

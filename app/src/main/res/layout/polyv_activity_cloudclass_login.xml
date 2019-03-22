@@ -117,8 +117,7 @@
                     android:hint="@string/login_userId"
                     android:textColorHint="@color/place_holder_color"
                     android:textCursorDrawable="@null"
-                    android:textSize="16sp"
-                    />
+                    android:textSize="16sp" />
 
                 <EditText
                     android:id="@+id/channel_id"
@@ -148,8 +147,7 @@
                     android:hint="@string/login_appSecert"
                     android:textColorHint="@color/place_holder_color"
                     android:textCursorDrawable="@null"
-                    android:textSize="16sp"
-                     />
+                    android:textSize="16sp" />
 
 
             </LinearLayout>

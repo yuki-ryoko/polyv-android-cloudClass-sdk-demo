@@ -38,18 +38,19 @@ import java.util.ListIterator;
 public abstract class PolyvCommonMediacontroller<T extends PolyvCommonVideoView> extends FrameLayout
         implements IPolyvMediaController<T>, View.OnClickListener {
 
+    //控制栏显示的时间
+    protected static final int SHOW_TIME = 5000;
     private static final String TAG = "PolyvCommonMediacontoller";
+    private static final String landTag = "land";
+    private static final String portraitTag = "portrait";
     protected View rootView, parentView;
     protected TextView bitrateChange;
     protected TextView bitrateChangeLand;
-    //控制栏显示的时间
-    protected static final int SHOW_TIME = 5000;
     protected boolean showPPTSubView = true;//ppt显示在副屏
     protected RelativeLayout videoControllerPort;
     protected RelativeLayout videoControllerLand;
     protected Activity context;
     protected T polyvVideoView;
-
     //清晰度选择view
     protected RelativeLayout liveControllerBottom;
     protected LinearLayout bitrateLayout;
@@ -60,13 +61,9 @@ public abstract class PolyvCommonMediacontroller<T extends PolyvCommonVideoView>
     protected PolyvBitrateVO polyvLiveBitrateVO;
     protected ListIterator<PolyvDefinitionVO> iterator;
     protected ImageView videoBack;
-
     private ViewGroup contentView, fullVideoViewParent;
     private ViewGroup.LayoutParams portraitLP;//(需要移动的整个播放器布局)在竖屏下的LayoutParams
     private ViewGroup fullVideoView;//需要移动的整个播放器布局
-    private static final String landTag = "land";
-    private static final String portraitTag = "portrait";
-
     private Runnable hideTask = new Runnable() {
         @Override
         public void run() {
@@ -107,20 +104,19 @@ public abstract class PolyvCommonMediacontroller<T extends PolyvCommonVideoView>
     }
 
     @Override
+    public T getMediaPlayer() {
+        return polyvVideoView;
+    }
+
+    @Override
     public void setMediaPlayer(T player) {
 
         polyvVideoView = player;
     }
 
     @Override
-    public T getMediaPlayer() {
-        return polyvVideoView;
-    }
-
-
-    @Override
     public void changeToLandscape() {
-        if(PolyvScreenUtils.isLandscape(context)){
+        if (PolyvScreenUtils.isLandscape(context)) {
             return;
         }
         context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
@@ -157,14 +153,13 @@ public abstract class PolyvCommonMediacontroller<T extends PolyvCommonVideoView>
         });
 
 
-
     }
 
     @Override
     public void changeToPortrait() {
-       if(PolyvScreenUtils.isPortrait(context)){
-           return;
-       }
+        if (PolyvScreenUtils.isPortrait(context)) {
+            return;
+        }
         context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         hide();
 
@@ -216,7 +211,7 @@ public abstract class PolyvCommonMediacontroller<T extends PolyvCommonVideoView>
     @Override
     public void show(int timeout) {
         setVisibility(VISIBLE);
-        if(getHandler() != null){
+        if (getHandler() != null) {
             getHandler().removeCallbacks(hideTask);
         }
         postDelayed(hideTask, timeout);
@@ -224,7 +219,7 @@ public abstract class PolyvCommonMediacontroller<T extends PolyvCommonVideoView>
 
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
-        PolyvCommonLog.d(TAG,"onConfigurationChanged");
+        PolyvCommonLog.d(TAG, "onConfigurationChanged");
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             PolyvScreenUtils.hideStatusBar(context);
@@ -377,7 +372,7 @@ public abstract class PolyvCommonMediacontroller<T extends PolyvCommonVideoView>
 
             showBitrate(false);
 
-        }else if(id == R.id.bitrate_layout){
+        } else if (id == R.id.bitrate_layout) {
             hideBitrate();
         }
     }

@@ -1,2 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.easefun.polyv.commonui" />
+<manifest package="com.easefun.polyv.commonui" />

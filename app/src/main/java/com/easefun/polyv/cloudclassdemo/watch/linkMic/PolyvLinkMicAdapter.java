@@ -31,7 +31,7 @@ import io.reactivex.functions.Consumer;
 /**
  * @author df
  * @create 2018/10/17
- * @Describe  用于列表的适配器 少于三个的  可以用这个适配器快速构建
+ * @Describe 用于列表的适配器 少于三个的  可以用这个适配器快速构建
  * 多余三个的 在关闭摄像头 再重新打开会有偶发性的黑屏问题
  */
 public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapter.PolyvMicHodler> {
@@ -42,7 +42,7 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
 
     private List<String> uids = new ArrayList<>();
     private Map<String, PolyvJoinInfoEvent> joins = new LinkedHashMap<>();
-    private String myUid,teacherId;
+    private String myUid, teacherId;
     private PolyvJoinInfoEvent teacher;
     private View teacherView;//老师的布局view
     private View teacherParentView;//   teacherParentView:老师外层布局view
@@ -60,10 +60,10 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
 
     public PolyvLinkMicAdapter(String myUid) {
         this.myUid = myUid;
-        addOwenr(myUid,null);
+        addOwenr(myUid, null);
     }
 
-    public void addOwenr(String myUid,PolyvJoinInfoEvent owern) {
+    public void addOwenr(String myUid, PolyvJoinInfoEvent owern) {
         //将自己先放在第一位 老师来的顺序可能在后面 老师再放置再第一位 保证前两位一直室老师跟自己
         if (!uids.contains(myUid)) {
             uids.add(0, myUid);
@@ -77,7 +77,7 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
 
     @Override
     public void onViewRecycled(@NonNull PolyvMicHodler holder) {
-        PolyvCommonLog.e(TAG,"onViewRecycled pos :"+holder.pos);
+        PolyvCommonLog.e(TAG, "onViewRecycled pos :" + holder.pos);
         super.onViewRecycled(holder);
     }
 
@@ -114,7 +114,7 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
             holder.polyvLinkNick.setText("我");
             owernView = holder.itemView;
             owernCamera = holder.camerSwitch;
-            if(!isAudio){
+            if (!isAudio) {
                 owernView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -125,11 +125,11 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
                 startShowTimer();
             }
 
-        }else if (polyvJoinRequestSEvent != null ) {
+        } else if (polyvJoinRequestSEvent != null) {
             holder.polyvLinkNick.setText(polyvJoinRequestSEvent.getNick());
         }
-        SurfaceView surfaceView =  holder.camerLayout.findViewById(CAMERA_VIEW_ID);
-        PolyvCommonLog.d(TAG, "onBindViewHolder:uid :" + uid+"  pos :"+position);
+        SurfaceView surfaceView = holder.camerLayout.findViewById(CAMERA_VIEW_ID);
+        PolyvCommonLog.d(TAG, "onBindViewHolder:uid :" + uid + "  pos :" + position);
         if (polyvJoinRequestSEvent != null) {
             surfaceView.setVisibility(polyvJoinRequestSEvent.isMute() ? View.INVISIBLE : View.VISIBLE);
         }
@@ -171,7 +171,7 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
         });
     }
 
-    public synchronized void addData(PolyvJoinInfoEvent requestSEvent,boolean updateImmidately) {
+    public synchronized void addData(PolyvJoinInfoEvent requestSEvent, boolean updateImmidately) {
         if (requestSEvent == null || joins.containsKey(requestSEvent.getUserId()) || TextUtils.isEmpty(requestSEvent.getUserId())) {
             PolyvCommonLog.d(TAG, "contains userid  || userid is  :");
             return;
@@ -180,12 +180,11 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
 
             if (!uids.contains(requestSEvent.getUserId())) {
                 //老师放在第一位
-                if("teacher".equals(requestSEvent.getUserType())){
-                    teacherId =  requestSEvent.getUserId();
-                    addTeacher(teacherId,requestSEvent);
+                if ("teacher".equals(requestSEvent.getUserType())) {
+                    teacherId = requestSEvent.getUserId();
+                    addTeacher(teacherId, requestSEvent);
                     uids.add(0, requestSEvent.getUserId());
-                }
-                else {
+                } else {
                     uids.add(requestSEvent.getUserId());
                 }
             }
@@ -193,24 +192,24 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
 
             joins.put(requestSEvent.getUserId(), requestSEvent);
 
-            if(updateImmidately){
-                PolyvCommonLog.e(TAG,"update updateImmidately:"+requestSEvent.getUserType());
+            if (updateImmidately) {
+                PolyvCommonLog.e(TAG, "update updateImmidately:" + requestSEvent.getUserType());
                 if ("teacher".equals(requestSEvent.getUserType())) {
                     requestSEvent.setPos(0);
 //                    notifyItemInserted(0);//通知数据与界面重新绑定
-                    notifyItemRangeChanged(0,uids.size() - 1);
+                    notifyItemRangeChanged(0, uids.size() - 1);
                 } else {
                     requestSEvent.setPos(uids.size() - 1);
                     notifyItemInserted(uids.size() - 1);//通知数据与界面重新绑定
                 }
             }
 
-            PolyvCommonLog.e(TAG,"update :"+requestSEvent.getUserType());
+            PolyvCommonLog.e(TAG, "update :" + requestSEvent.getUserType());
             arrangeDataPos();
 
             Thread.sleep(200);
         } catch (Exception e) {
-            PolyvCommonLog.e(TAG,e.getMessage());
+            PolyvCommonLog.e(TAG, e.getMessage());
         }
 
 
@@ -265,7 +264,7 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
         return uids.size();
     }
 
-    private  void addTeacher(String teacherId,PolyvJoinInfoEvent teacherEvent) {
+    private void addTeacher(String teacherId, PolyvJoinInfoEvent teacherEvent) {
         this.teacher = teacherEvent;
         this.teacherId = teacherId;
         teacher.setUserId(teacherId);
@@ -291,29 +290,6 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
 
     public void addParent(PolyvLinkMicListView linkMicLayout) {
         parentView = linkMicLayout;
-    }
-
-    public class PolyvMicHodler extends RecyclerView.ViewHolder {
-
-        public View camer;
-        public ImageView camerSwitch;
-        public TextView polyvLinkNick;
-        public FrameLayout camerLayout;
-        public int pos;
-
-        public PolyvMicHodler(View itemView) {
-            super(itemView);
-            camer = itemView.findViewById(R.id.polyv_link_camera_switch_container);
-            camerSwitch = itemView.findViewById(R.id.polyv_camera_switch);
-            polyvLinkNick = itemView.findViewById(R.id.polyv_link_nick);
-            camerLayout = itemView.findViewById(R.id.polyv_link_mic_camera_layout);
-            camerSwitch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PolyvLinkMicWrapper.getInstance().switchCamera();
-                }
-            });
-        }
     }
 
     public View getTeacherView() {
@@ -344,5 +320,28 @@ public class PolyvLinkMicAdapter extends RecyclerView.Adapter<PolyvLinkMicAdapte
             cameraView = teacherView.findViewById(CAMERA_VIEW_ID);
         }
         return cameraView;
+    }
+
+    public class PolyvMicHodler extends RecyclerView.ViewHolder {
+
+        public View camer;
+        public ImageView camerSwitch;
+        public TextView polyvLinkNick;
+        public FrameLayout camerLayout;
+        public int pos;
+
+        public PolyvMicHodler(View itemView) {
+            super(itemView);
+            camer = itemView.findViewById(R.id.polyv_link_camera_switch_container);
+            camerSwitch = itemView.findViewById(R.id.polyv_camera_switch);
+            polyvLinkNick = itemView.findViewById(R.id.polyv_link_nick);
+            camerLayout = itemView.findViewById(R.id.polyv_link_mic_camera_layout);
+            camerSwitch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PolyvLinkMicWrapper.getInstance().switchCamera();
+                }
+            });
+        }
     }
 }

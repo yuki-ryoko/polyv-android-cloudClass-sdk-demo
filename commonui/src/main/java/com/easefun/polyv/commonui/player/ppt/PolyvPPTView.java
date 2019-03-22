@@ -80,7 +80,7 @@ public class PolyvPPTView extends FrameLayout implements IPolyvPPTView {
         });
     }
 
-    public void reLoad(){
+    public void reLoad() {
         polyvPPTWebView.loadWeb();
     }
 
@@ -90,9 +90,9 @@ public class PolyvPPTView extends FrameLayout implements IPolyvPPTView {
                 ONSLICEDRAW.equals(event) ||
                 ONSLICECONTROL.equals(event) ||
                 ONSLICEOPEN.equals(event) || ONSLICEID.equals(event)) {
-            PolyvCommonLog.d(TAG, "receive ppt message:"+event);
+            PolyvCommonLog.d(TAG, "receive ppt message:" + event);
             hideLoading();
-            delayDisposes.add(PolyvRxTimer.delay(2 *1000, new Consumer<Long>() {
+            delayDisposes.add(PolyvRxTimer.delay(2 * 1000, new Consumer<Long>() {
                 @Override
                 public void accept(Long aLong) throws Exception {
                     sendWebMessage(polyvSocketMessageVO.getMessage());

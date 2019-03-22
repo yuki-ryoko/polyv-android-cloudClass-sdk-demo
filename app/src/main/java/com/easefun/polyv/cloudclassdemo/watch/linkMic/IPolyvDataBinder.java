@@ -18,9 +18,9 @@ import io.reactivex.functions.Consumer;
  */
 public abstract class IPolyvDataBinder {
 
+    protected static final int SHOW_TIME = 5 * 1000;
     protected Disposable ownerShowTimer;//头像显示切换定时器
     protected View ownerView, ownerCamera;//自己的布局view
-    protected static final int SHOW_TIME = 5 * 1000;
 
     public abstract void addOwner(String myUid, PolyvJoinInfoEvent owern);
 
@@ -31,49 +31,33 @@ public abstract class IPolyvDataBinder {
     public void switchView(String originUid) {
     }
 
-    ;
-
     public ViewGroup switchViewToMianScreen(String userId) {
         return null;
     }
-
-    ;
 
     public int getJoinsPos(String uid) {
         return -1;
     }
 
-    ;
-
     public void updateSwitchViewStatus(String subLinkMicViewUid, String mainLinkMicViewUid) {
 
     }
-
-    ;
 
     public ViewGroup getFirstLinkMicView() {
         return null;
     }
 
-    ;
-
     public View getTeacherParentView() {
         return null;
     }
-
-    ;
 
     public View getCameraView(View parent) {
         return null;
     }
 
-    ;
-
     public View getCameraView() {
         return null;
     }
-
-    ;
 
     public void updateCamerStatus(boolean cameraOpen) {
 
@@ -92,12 +76,12 @@ public abstract class IPolyvDataBinder {
 
     public abstract void clear();
 
-    public void startAudioWave(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume){
+    public void startAudioWave(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
 
-    };
+    }
 
 
-    public void bindLinkMicFrontView(ViewGroup frontView){
+    public void bindLinkMicFrontView(ViewGroup frontView) {
 
     }
 

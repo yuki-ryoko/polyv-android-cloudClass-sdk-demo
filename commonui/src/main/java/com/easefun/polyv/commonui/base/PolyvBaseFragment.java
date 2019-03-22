@@ -17,11 +17,11 @@ import com.easefun.polyv.foundationsdk.permission.PolyvPermissionManager;
 import io.reactivex.disposables.CompositeDisposable;
 
 public abstract class PolyvBaseFragment extends Fragment implements PolyvPermissionListener {
+    private final int myRequestCode = 16666;
     protected CompositeDisposable disposables;
     protected View view;
     protected PolyvPermissionManager permissionManager;
     protected PolyvToast toast;
-    private final int myRequestCode = 16666;
     private boolean isCreatedFlag, isActivityCreatedFlag, isCallFirstDelay;
 
     @Nullable

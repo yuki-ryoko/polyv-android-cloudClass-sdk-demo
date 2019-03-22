@@ -42,7 +42,7 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
 
     private static final String TAG = "PolyvCloudClassMediaController";
     private static final int TOAST_SHOW_TIME = 5 * 1000;
-    private static final int LINK_UP_TIMEOUT = 20 * 1000 ;
+    private static final int LINK_UP_TIMEOUT = 20 * 1000;
 
     private ImageView videoRefreshPort;
     private ImageView videoScreenSwitchPort;
@@ -62,9 +62,9 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
     private boolean showCamer;
 
     // 控制栏是否是显示状态
-    private boolean isShowing,showPPT;
+    private boolean isShowing, showPPT;
     private PopupWindow bitRatePopupWindow;
-    private Disposable popupWindowTimer,linkUpTimer;
+    private Disposable popupWindowTimer, linkUpTimer;
     // 提示对话框
     private AlertDialog alertDialog;
 
@@ -181,7 +181,7 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
         showView.getLocationOnScreen(location);
         //在控件上方显示
         View child = bitRatePopupWindow.getContentView();
-        TextView definition = (TextView) child.findViewById(R.id.live_bitrate_popup_definition);
+        TextView definition = child.findViewById(R.id.live_bitrate_popup_definition);
 
         PolyvDefinitionVO definitionVO = polyvLiveBitrateVO.getDefinitions().get(Math.max(0, currentBitratePos + 1));
         definition.setText(definitionVO.definition);
@@ -261,7 +261,7 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
             case R.id.video_hands_up_port:
                 if (!polyvCloudClassPlayerHelper.requestPermission()) {
                     return;
-                };
+                }
 
                 break;
             case R.id.video_ppt_change_switch_port:
@@ -299,8 +299,8 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
     @Override
     public void updatePPTShowStatus(boolean showPPT) {
         this.showPPT = showPPT;
-        videoPptChangeSwitchPort.setVisibility(showPPT?VISIBLE:GONE);
-        videoScreenSwitchLand.setVisibility(showPPT?VISIBLE:GONE);
+        videoPptChangeSwitchPort.setVisibility(showPPT ? VISIBLE : GONE);
+        videoScreenSwitchLand.setVisibility(showPPT ? VISIBLE : GONE);
     }
 
     private void tooggle() {
@@ -325,7 +325,7 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
     }
 
     public void changePPTVideoLocation() {
-        if(!showPPT){//如果不显示ppt  不触发此功能
+        if (!showPPT) {//如果不显示ppt  不触发此功能
             return;
         }
         if (polyvCloudClassPlayerHelper != null) {
@@ -338,8 +338,8 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
     }
 
     //将ppt显示在主屏位置
-    public void switchPPTToMainScreen(){
-        if(!showPPTSubView){//如果已经显示在主屏了 不再执行此逻辑
+    public void switchPPTToMainScreen() {
+        if (!showPPTSubView) {//如果已经显示在主屏了 不再执行此逻辑
             return;
         }
         if (polyvCloudClassPlayerHelper != null) {
@@ -371,7 +371,7 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
 
     private void startHandsUpTimer() {
         cancleLinkUpTimer();
-        linkUpTimer =  PolyvRxTimer.delay(LINK_UP_TIMEOUT, new Consumer<Long>() {
+        linkUpTimer = PolyvRxTimer.delay(LINK_UP_TIMEOUT, new Consumer<Long>() {
             @Override
             public void accept(Long aLong) throws Exception {
                 resetSelectedStatus(videoHandsUpPort);
@@ -380,14 +380,14 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
     }
 
     public void cancleLinkUpTimer() {
-        if(linkUpTimer != null){
-            PolyvCommonLog.d(TAG,"cancleLinkUpTimer");
+        if (linkUpTimer != null) {
+            PolyvCommonLog.d(TAG, "cancleLinkUpTimer");
             linkUpTimer.dispose();
             linkUpTimer = null;
         }
     }
 
-    private void showStopLinkDialog(boolean joinSuccess, final boolean isExit) {
+    private void showStopLinkDialog(final boolean joinSuccess, final boolean isExit) {
         String message = joinSuccess ? String.format("您将断开与老师同学间的通话%s。", isExit ? "并退出" : "") :
                 "您将取消连线申请";
         String btnMsg = joinSuccess ? String.format("挂断%s", isExit ? "并退出" : "") : "取消连线";
@@ -402,9 +402,9 @@ public class PolyvCloudClassMediaController extends PolyvCommonMediacontroller<P
                         }
                         videoHandsUpPort.setSelected(!videoHandsUpPort.isSelected());
                         videoHandsUpLand.setSelected(!videoHandsUpPort.isSelected());
-                        if(joinSuccess){
+                        if (joinSuccess) {
                             PolyvLinkMicWrapper.getInstance().leaveChannel();
-                        }else {
+                        } else {
                             polyvCloudClassPlayerHelper.leaveChannel();
                         }
                         startHandsUpTimer();

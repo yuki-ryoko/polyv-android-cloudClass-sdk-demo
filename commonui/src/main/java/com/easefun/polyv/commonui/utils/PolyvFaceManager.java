@@ -16,11 +16,12 @@ import java.util.Map;
  */
 public class PolyvFaceManager {
 
+    private static PolyvFaceManager instance;
+    private Map<String, Integer> mFaceMap;
+
     private PolyvFaceManager() {
         initFaceMap();
     }
-
-    private static PolyvFaceManager instance;
 
     public static PolyvFaceManager getInstance() {
         if (null == instance)
@@ -60,8 +61,6 @@ public class PolyvFaceManager {
     public Map<String, Integer> getFaceMap() {
         return mFaceMap;
     }
-
-    private Map<String, Integer> mFaceMap;
 
     private void initFaceMap() {
         mFaceMap = new LinkedHashMap<String, Integer>();

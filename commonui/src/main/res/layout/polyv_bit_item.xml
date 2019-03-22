@@ -5,10 +5,10 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_gravity="center"
         android:id="@+id/live_bit_name"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_gravity="center"
         android:layout_margin="8dp"
         android:gravity="center"
         android:text="高清"

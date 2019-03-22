@@ -11,8 +11,8 @@ import android.widget.ImageView;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.easefun.polyv.cloudclass.PolyvSocketEvent;
-import com.easefun.polyv.cloudclass.model.answer.PolyvQuestionResultVO;
 import com.easefun.polyv.cloudclass.model.PolyvSocketMessageVO;
+import com.easefun.polyv.cloudclass.model.answer.PolyvQuestionResultVO;
 import com.easefun.polyv.cloudclass.model.answer.PolyvQuestionSResult;
 import com.easefun.polyv.cloudclass.video.PolyvAnswerWebView;
 import com.easefun.polyv.commonui.R;
@@ -96,27 +96,27 @@ public class PolyvAnswerView extends FrameLayout {
 
 
     private void showAnswerWebView(PolyvSocketMessageVO polyvSocketMessage) {
-        if (polyvSocketMessage == null || ScreenUtils.isLandscape() ) {
+        if (polyvSocketMessage == null || ScreenUtils.isLandscape()) {
             return;
         }
-        if(PolyvSocketEvent.GET_TEST_QUESTION_CONTENT.equals(polyvSocketMessage.getEvent())){
+        if (PolyvSocketEvent.GET_TEST_QUESTION_CONTENT.equals(polyvSocketMessage.getEvent())) {
             PolyvQuestionSResult polyvQuestionSResult =
-                    PolyvGsonUtil.fromJson(PolyvQuestionSResult.class,polyvSocketMessage.getMessage());
-            if(polyvQuestionSResult != null && "S".equals(polyvQuestionSResult.getType())){
+                    PolyvGsonUtil.fromJson(PolyvQuestionSResult.class, polyvSocketMessage.getMessage());
+            if (polyvQuestionSResult != null && "S".equals(polyvQuestionSResult.getType())) {
                 return;
             }
         }
         PolyvQuestionResultVO socketVO = null;
-        if(PolyvSocketEvent.GET_TEST_QUESTION_RESULT.equals(polyvSocketMessage.getEvent())){
+        if (PolyvSocketEvent.GET_TEST_QUESTION_RESULT.equals(polyvSocketMessage.getEvent())) {
             socketVO = PolyvGsonUtil.fromJson(PolyvQuestionResultVO.class, polyvSocketMessage.getMessage());
-            if(socketVO != null&&socketVO.getResult() != null && "S".equals(socketVO.getResult().getType())){
+            if (socketVO != null && socketVO.getResult() != null && "S".equals(socketVO.getResult().getType())) {
                 return;
             }
         }
 
         answerContainer.setVisibility(VISIBLE);
         if (PolyvSocketEvent.GET_TEST_QUESTION_RESULT.equals(polyvSocketMessage.getEvent())) {
-            if(socketVO != null){
+            if (socketVO != null) {
                 answerWebView.callHasChooseAnswer(socketVO.getQuestionId(), polyvSocketMessage.getMessage());
             }
         } else if (PolyvSocketEvent.GET_TEST_QUESTION_CONTENT.equals(polyvSocketMessage.getEvent())) {

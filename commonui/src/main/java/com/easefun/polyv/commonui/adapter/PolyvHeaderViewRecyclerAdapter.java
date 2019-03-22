@@ -24,137 +24,6 @@ public class PolyvHeaderViewRecyclerAdapter extends RecyclerView.Adapter<Recycle
     private List<View> mHeaderViews, mFooterViews;
 
     private Map<Class, Integer> mItemTypesOffset;
-
-
-    public PolyvHeaderViewRecyclerAdapter(RecyclerView.Adapter adapter) {
-
-        mHeaderViews = new ArrayList<>();
-        mFooterViews = new ArrayList<>();
-        mItemTypesOffset = new HashMap<>();
-        setWrappedAdapter(adapter);
-    }
-
-
-    public void setAdapter(RecyclerView.Adapter adapter) {
-
-        if (mWrappedAdapter != null && mWrappedAdapter.getItemCount() > 0) {
-            notifyItemRangeRemoved(getHeaderCount(), mWrappedAdapter.getItemCount());
-        }
-        setWrappedAdapter(adapter);
-        notifyItemRangeInserted(getHeaderCount(), mWrappedAdapter.getItemCount());
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-
-        int hCount = getHeaderCount();
-        if (position < hCount) {
-            return HEADERS_START + position;
-        } else {
-            int itemCount = mWrappedAdapter.getItemCount();
-            if (position < hCount + itemCount) {
-                return getAdapterTypeOffset() + mWrappedAdapter.getItemViewType(position - hCount);
-            } else {
-                return FOOTERS_START + position - hCount - itemCount;
-            }
-        }
-    }
-
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-
-        if (viewType < HEADERS_START + getHeaderCount()) {
-            return new StaticViewHolder(mHeaderViews.get(viewType - HEADERS_START));
-        } else if (viewType < FOOTERS_START + getFooterCount()) {
-            return new StaticViewHolder(mFooterViews.get(viewType - FOOTERS_START));
-        } else {
-            return mWrappedAdapter.onCreateViewHolder(viewGroup, viewType - getAdapterTypeOffset());
-        }
-    }
-
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-
-        int hCount = getHeaderCount();
-        if (position >= hCount && position < hCount + mWrappedAdapter.getItemCount()) {
-            mWrappedAdapter.onBindViewHolder(viewHolder, position - hCount);
-        }
-    }
-
-
-    public void addHeaderView(View view) {
-
-        mHeaderViews.add(view);
-    }
-
-
-    public void addFooterView(View view) {
-
-        mFooterViews.add(view);
-    }
-
-
-    public void removeHeadView() {
-
-        mHeaderViews.clear();
-    }
-
-
-    public void removeFootView() {
-        mFooterViews.clear();
-    }
-
-
-    @Override
-    public int getItemCount() {
-
-        return getHeaderCount() + getFooterCount() + getWrappedItemCount();
-    }
-
-
-    private int getWrappedItemCount() {
-
-        return mWrappedAdapter.getItemCount();
-    }
-
-
-    private int getHeaderCount() {
-
-        return mHeaderViews.size();
-    }
-
-
-    private int getFooterCount() {
-
-        return mFooterViews.size();
-    }
-
-
-    private void setWrappedAdapter(RecyclerView.Adapter adapter) {
-
-        if (mWrappedAdapter != null) mWrappedAdapter.unregisterAdapterDataObserver(mDataObserver);
-        mWrappedAdapter = adapter;
-        Class adapterClass = mWrappedAdapter.getClass();
-        if (!mItemTypesOffset.containsKey(adapterClass)) putAdapterTypeOffset(adapterClass);
-        mWrappedAdapter.registerAdapterDataObserver(mDataObserver);
-    }
-
-
-    private void putAdapterTypeOffset(Class adapterClass) {
-
-        mItemTypesOffset.put(adapterClass, ITEMS_START + mItemTypesOffset.size() * ADAPTER_MAX_TYPES);
-    }
-
-
-    private int getAdapterTypeOffset() {
-
-        return mItemTypesOffset.get(mWrappedAdapter.getClass());
-    }
-
-
     private RecyclerView.AdapterDataObserver mDataObserver = new RecyclerView.AdapterDataObserver() {
 
         @Override
@@ -198,6 +67,120 @@ public class PolyvHeaderViewRecyclerAdapter extends RecyclerView.Adapter<Recycle
             notifyItemRangeChanged(fromPosition + hCount, toPosition + hCount + itemCount);
         }
     };
+
+
+    public PolyvHeaderViewRecyclerAdapter(RecyclerView.Adapter adapter) {
+
+        mHeaderViews = new ArrayList<>();
+        mFooterViews = new ArrayList<>();
+        mItemTypesOffset = new HashMap<>();
+        setWrappedAdapter(adapter);
+    }
+
+    public void setAdapter(RecyclerView.Adapter adapter) {
+
+        if (mWrappedAdapter != null && mWrappedAdapter.getItemCount() > 0) {
+            notifyItemRangeRemoved(getHeaderCount(), mWrappedAdapter.getItemCount());
+        }
+        setWrappedAdapter(adapter);
+        notifyItemRangeInserted(getHeaderCount(), mWrappedAdapter.getItemCount());
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        int hCount = getHeaderCount();
+        if (position < hCount) {
+            return HEADERS_START + position;
+        } else {
+            int itemCount = mWrappedAdapter.getItemCount();
+            if (position < hCount + itemCount) {
+                return getAdapterTypeOffset() + mWrappedAdapter.getItemViewType(position - hCount);
+            } else {
+                return FOOTERS_START + position - hCount - itemCount;
+            }
+        }
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+        if (viewType < HEADERS_START + getHeaderCount()) {
+            return new StaticViewHolder(mHeaderViews.get(viewType - HEADERS_START));
+        } else if (viewType < FOOTERS_START + getFooterCount()) {
+            return new StaticViewHolder(mFooterViews.get(viewType - FOOTERS_START));
+        } else {
+            return mWrappedAdapter.onCreateViewHolder(viewGroup, viewType - getAdapterTypeOffset());
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+
+        int hCount = getHeaderCount();
+        if (position >= hCount && position < hCount + mWrappedAdapter.getItemCount()) {
+            mWrappedAdapter.onBindViewHolder(viewHolder, position - hCount);
+        }
+    }
+
+    public void addHeaderView(View view) {
+
+        mHeaderViews.add(view);
+    }
+
+    public void addFooterView(View view) {
+
+        mFooterViews.add(view);
+    }
+
+    public void removeHeadView() {
+
+        mHeaderViews.clear();
+    }
+
+    public void removeFootView() {
+        mFooterViews.clear();
+    }
+
+    @Override
+    public int getItemCount() {
+
+        return getHeaderCount() + getFooterCount() + getWrappedItemCount();
+    }
+
+    private int getWrappedItemCount() {
+
+        return mWrappedAdapter.getItemCount();
+    }
+
+    private int getHeaderCount() {
+
+        return mHeaderViews.size();
+    }
+
+    private int getFooterCount() {
+
+        return mFooterViews.size();
+    }
+
+    private void setWrappedAdapter(RecyclerView.Adapter adapter) {
+
+        if (mWrappedAdapter != null) mWrappedAdapter.unregisterAdapterDataObserver(mDataObserver);
+        mWrappedAdapter = adapter;
+        Class adapterClass = mWrappedAdapter.getClass();
+        if (!mItemTypesOffset.containsKey(adapterClass)) putAdapterTypeOffset(adapterClass);
+        mWrappedAdapter.registerAdapterDataObserver(mDataObserver);
+    }
+
+    private void putAdapterTypeOffset(Class adapterClass) {
+
+        mItemTypesOffset.put(adapterClass, ITEMS_START + mItemTypesOffset.size() * ADAPTER_MAX_TYPES);
+    }
+
+    private int getAdapterTypeOffset() {
+
+        return mItemTypesOffset.get(mWrappedAdapter.getClass());
+    }
 
     private static class StaticViewHolder extends RecyclerView.ViewHolder {
 

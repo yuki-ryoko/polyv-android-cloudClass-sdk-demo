@@ -21,6 +21,25 @@ import java.lang.annotation.RetentionPolicy;
 
 public class PolyvCircleProgressView extends ProgressBar {
 
+    private static final String STATE = "state";
+    private static final String PROGRESS_STYLE = "progressStyle";
+    private static final String TEXT_COLOR = "textColor";
+    private static final String TEXT_SIZE = "textSize";
+    private static final String TEXT_SKEW_X = "textSkewX";
+    private static final String TEXT_VISIBLE = "textVisible";
+    private static final String TEXT_SUFFIX = "textSuffix";
+    private static final String TEXT_PREFIX = "textPrefix";
+    private static final String REACH_BAR_COLOR = "reachBarColor";
+    private static final String REACH_BAR_SIZE = "reachBarSize";
+    private static final String NORMAL_BAR_COLOR = "normalBarColor";
+    private static final String NORMAL_BAR_SIZE = "normalBarSize";
+    private static final String IS_REACH_CAP_ROUND = "isReachCapRound";
+    private static final String RADIUS = "radius";
+    private static final String START_ARC = "startArc";
+    private static final String INNER_BG_COLOR = "innerBgColor";
+    private static final String INNER_PADDING = "innerPadding";
+    private static final String OUTER_COLOR = "outerColor";
+    private static final String OUTER_SIZE = "outerSize";
     private int mReachBarSize = PolyvDpUtils.dp2px(getContext(), 2); // 未完成进度条大小
     private int mNormalBarSize = PolyvDpUtils.dp2px(getContext(), 2); // 未完成进度条大小
     private int mReachBarColor = Color.parseColor("#108ee9"); // 已完成进度颜色
@@ -47,17 +66,8 @@ public class PolyvCircleProgressView extends ProgressBar {
     private Paint mReachPaint; // 绘制已完成进度画笔
     private Paint mInnerBackgroundPaint; // 内部背景画笔
     private Paint mOutPaint; // 外部圆环画笔
-
     private int mRealWidth;
     private int mRealHeight;
-
-    @IntDef({ProgressStyle.NORMAL, ProgressStyle.FILL_IN, ProgressStyle.FILL_IN_ARC})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ProgressStyle {
-        int NORMAL = 0;
-        int FILL_IN = 1;
-        int FILL_IN_ARC = 2;
-    }
 
     public PolyvCircleProgressView(Context context) {
         this(context, null);
@@ -499,26 +509,6 @@ public class PolyvCircleProgressView extends ProgressBar {
         invalidate();
     }
 
-    private static final String STATE = "state";
-    private static final String PROGRESS_STYLE = "progressStyle";
-    private static final String TEXT_COLOR = "textColor";
-    private static final String TEXT_SIZE = "textSize";
-    private static final String TEXT_SKEW_X = "textSkewX";
-    private static final String TEXT_VISIBLE = "textVisible";
-    private static final String TEXT_SUFFIX = "textSuffix";
-    private static final String TEXT_PREFIX = "textPrefix";
-    private static final String REACH_BAR_COLOR = "reachBarColor";
-    private static final String REACH_BAR_SIZE = "reachBarSize";
-    private static final String NORMAL_BAR_COLOR = "normalBarColor";
-    private static final String NORMAL_BAR_SIZE = "normalBarSize";
-    private static final String IS_REACH_CAP_ROUND = "isReachCapRound";
-    private static final String RADIUS = "radius";
-    private static final String START_ARC = "startArc";
-    private static final String INNER_BG_COLOR = "innerBgColor";
-    private static final String INNER_PADDING = "innerPadding";
-    private static final String OUTER_COLOR = "outerColor";
-    private static final String OUTER_SIZE = "outerSize";
-
     @Override
     public Parcelable onSaveInstanceState() {
         final Bundle bundle = new Bundle();
@@ -586,5 +576,13 @@ public class PolyvCircleProgressView extends ProgressBar {
     public void invalidate() {
         initPaint();
         super.invalidate();
+    }
+
+    @IntDef({ProgressStyle.NORMAL, ProgressStyle.FILL_IN, ProgressStyle.FILL_IN_ARC})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ProgressStyle {
+        int NORMAL = 0;
+        int FILL_IN = 1;
+        int FILL_IN_ARC = 2;
     }
 }

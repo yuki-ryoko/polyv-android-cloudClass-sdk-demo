@@ -40,15 +40,15 @@ public class PolyvChatImageFragment extends PolyvBaseFragment {
     private String imgUrl;
     private int listenerPosition;
 
-    @Override
-    public int layoutId() {
-        return R.layout.polyv_fragment_chat_image;
-    }
-
     public static PolyvChatImageFragment newInstance(PolyvChatListAdapter.ChatTypeItem chatTypeItem, int position) {
         PolyvChatImageFragment chatImageFragment = new PolyvChatImageFragment();
         chatImageFragment.setData(chatTypeItem, position);
         return chatImageFragment;
+    }
+
+    @Override
+    public int layoutId() {
+        return R.layout.polyv_fragment_chat_image;
     }
 
     private void setData(PolyvChatListAdapter.ChatTypeItem chatTypeItem, int position) {

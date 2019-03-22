@@ -111,61 +111,6 @@ public class PolyvSmoothRoundProgressView extends View {
         }
     }
 
-
-    public class CircleBarAnim extends Animation {
-
-        public CircleBarAnim() {
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {//interpolatedTime从0渐变成1,到1时结束动画,持续时间由setDuration（time）方法设置
-            super.applyTransformation(interpolatedTime, t);
-
-            if (progressNum > maxNum) {
-                progressNum = maxNum;
-            }
-            float progressAngle = sweepAngle * progressNum / maxNum;
-            //前半部分是增加声音，后半部分是减音量
-            if(interpolatedTime <= 0.5){
-                if (cacheAngle > 0) {
-                    if (cacheAngle > progressAngle) {//回调
-                        if(interpolatedTime <= 0.5){
-                            progressSweepAngle = (1-interpolatedTime )* 2 * (cacheAngle - progressAngle) + progressAngle;
-                            if (progressSweepAngle > sweepAngle) {
-                                progressSweepAngle = sweepAngle;
-                            }
-                        }
-                    } else {//前进
-                        progressSweepAngle = cacheAngle + interpolatedTime * 2 * (progressAngle - cacheAngle);
-                    }
-
-                }else{
-                    progressSweepAngle = interpolatedTime * 2 * progressAngle;
-                }
-
-            }else{
-                progressSweepAngle = (1-interpolatedTime) * 2 * progressAngle;
-            }
-
-
-
-            if (onAnimationListener != null) {
-                if (textView != null) {
-                    textView.setText(onAnimationListener.howToChangeText(interpolatedTime, progressNum, maxNum));
-                }
-                onAnimationListener.howToChangeProgressColor(progressPaint, interpolatedTime, progressNum, maxNum);
-            }
-
-            if (Math.abs(interpolatedTime - 1) < 0.01) {
-                cacheAngle = progressSweepAngle = 0;
-                PolyvCommonLog.e(TAG, "start end animation");
-//                animEnd.setDuration(500);
-//                startAnimation(animEnd);
-            }
-            postInvalidate();
-        }
-    }
-
     private int measureSize(int defaultSize, int measureSpec) {
         int result = defaultSize;
         int specMode = View.MeasureSpec.getMode(measureSpec);
@@ -178,7 +123,6 @@ public class PolyvSmoothRoundProgressView extends View {
         }
         return result;
     }
-
 
     /**
      * 设置进度条最大值
@@ -215,6 +159,10 @@ public class PolyvSmoothRoundProgressView extends View {
         this.textView = textView;
     }
 
+    public void setOnAnimationListener(OnAnimationListener onAnimationListener) {
+        this.onAnimationListener = onAnimationListener;
+    }
+
     public interface OnAnimationListener {
 
         /**
@@ -239,7 +187,56 @@ public class PolyvSmoothRoundProgressView extends View {
 
     }
 
-    public void setOnAnimationListener(OnAnimationListener onAnimationListener) {
-        this.onAnimationListener = onAnimationListener;
+    public class CircleBarAnim extends Animation {
+
+        public CircleBarAnim() {
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {//interpolatedTime从0渐变成1,到1时结束动画,持续时间由setDuration（time）方法设置
+            super.applyTransformation(interpolatedTime, t);
+
+            if (progressNum > maxNum) {
+                progressNum = maxNum;
+            }
+            float progressAngle = sweepAngle * progressNum / maxNum;
+            //前半部分是增加声音，后半部分是减音量
+            if (interpolatedTime <= 0.5) {
+                if (cacheAngle > 0) {
+                    if (cacheAngle > progressAngle) {//回调
+                        if (interpolatedTime <= 0.5) {
+                            progressSweepAngle = (1 - interpolatedTime) * 2 * (cacheAngle - progressAngle) + progressAngle;
+                            if (progressSweepAngle > sweepAngle) {
+                                progressSweepAngle = sweepAngle;
+                            }
+                        }
+                    } else {//前进
+                        progressSweepAngle = cacheAngle + interpolatedTime * 2 * (progressAngle - cacheAngle);
+                    }
+
+                } else {
+                    progressSweepAngle = interpolatedTime * 2 * progressAngle;
+                }
+
+            } else {
+                progressSweepAngle = (1 - interpolatedTime) * 2 * progressAngle;
+            }
+
+
+            if (onAnimationListener != null) {
+                if (textView != null) {
+                    textView.setText(onAnimationListener.howToChangeText(interpolatedTime, progressNum, maxNum));
+                }
+                onAnimationListener.howToChangeProgressColor(progressPaint, interpolatedTime, progressNum, maxNum);
+            }
+
+            if (Math.abs(interpolatedTime - 1) < 0.01) {
+                cacheAngle = progressSweepAngle = 0;
+                PolyvCommonLog.e(TAG, "start end animation");
+//                animEnd.setDuration(500);
+//                startAnimation(animEnd);
+            }
+            postInvalidate();
+        }
     }
 }

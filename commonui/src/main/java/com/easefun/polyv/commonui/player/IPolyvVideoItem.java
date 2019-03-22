@@ -12,16 +12,16 @@ import com.easefun.polyv.commonui.player.ppt.PolyvPPTItem;
  * @create 2018/8/10
  * @Describe
  */
-public interface IPolyvVideoItem<T extends PolyvCommonVideoView,R extends IPolyvMediaController> {
-    public View getView();
+public interface IPolyvVideoItem<T extends PolyvCommonVideoView, R extends IPolyvMediaController> {
+    View getView();
 
-    public T getVideoView();
+    T getVideoView();
 
-    public PolyvAuxiliaryVideoview getSubVideoView();
+    PolyvAuxiliaryVideoview getSubVideoView();
 
-    public R getController();
+    R getController();
 
-    public void resetUI();
+    void resetUI();
 
     void bindPPTView(PolyvPPTItem polyvPPTItem);
 

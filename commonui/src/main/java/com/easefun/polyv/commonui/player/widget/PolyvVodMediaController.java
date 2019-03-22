@@ -56,6 +56,18 @@ public class PolyvVodMediaController extends PolyvCommonMediacontroller<PolyvVod
     private int speedPos;
     private View speedChild;
 
+    public PolyvVodMediaController(Context context) {
+        this(context, null);
+    }
+
+    public PolyvVodMediaController(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public PolyvVodMediaController(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
     // 更新显示的播放进度，以及暂停/播放按钮
     private void showProgress() {
         if (isShowing) {
@@ -91,18 +103,6 @@ public class PolyvVodMediaController extends PolyvCommonMediacontroller<PolyvVod
         }
     }
 
-    public PolyvVodMediaController(Context context) {
-        this(context, null);
-    }
-
-    public PolyvVodMediaController(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public PolyvVodMediaController(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
     @Override
     protected void initialView() {
         initalHandler();
@@ -133,9 +133,9 @@ public class PolyvVodMediaController extends PolyvCommonMediacontroller<PolyvVod
         this.context = (Activity) context;
         rootView = LayoutInflater.from(this.context).inflate(R.layout.polyv_controller, this);
         //port controller
-        videoControllerPort = (RelativeLayout) findViewById(R.id.rl_port);
+        videoControllerPort = findViewById(R.id.rl_port);
         //land controller
-        videoControllerLand = (RelativeLayout) findViewById(R.id.rl_land);
+        videoControllerLand = findViewById(R.id.rl_land);
         videoControllerLand.setVisibility(View.GONE);
 
         videoBack = findViewById(R.id.video_back);
@@ -184,20 +184,20 @@ public class PolyvVodMediaController extends PolyvCommonMediacontroller<PolyvVod
 
     public void addOtherContolLayout(View view) {
         //speed layout
-        rlSpeed = (RelativeLayout) view.findViewById(R.id.rl_speed);
+        rlSpeed = view.findViewById(R.id.rl_speed);
         rlSpeed.setOnClickListener(this);
         speedContainer = view.findViewById(R.id.speed_container);
-        btSpeedPort = (Button) view.findViewById(R.id.bt_speed_port);
+        btSpeedPort = view.findViewById(R.id.bt_speed_port);
         btSpeedLand = findViewById(R.id.bt_speed_land);
         btSpeedPort.setOnClickListener(this);
         btSpeedLand.setOnClickListener(this);
-        bt_speed_10 = (Button) view.findViewById(R.id.bt_speed_10);
+        bt_speed_10 = view.findViewById(R.id.bt_speed_10);
         bt_speed_10.setOnClickListener(this);
-        bt_speed_12 = (Button) view.findViewById(R.id.bt_speed_12);
+        bt_speed_12 = view.findViewById(R.id.bt_speed_12);
         bt_speed_12.setOnClickListener(this);
-        bt_speed_15 = (Button) view.findViewById(R.id.bt_speed_15);
+        bt_speed_15 = view.findViewById(R.id.bt_speed_15);
         bt_speed_15.setOnClickListener(this);
-        bt_speed_20 = (Button) view.findViewById(R.id.bt_speed_20);
+        bt_speed_20 = view.findViewById(R.id.bt_speed_20);
         bt_speed_20.setOnClickListener(this);
     }
 

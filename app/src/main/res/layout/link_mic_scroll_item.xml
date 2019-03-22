@@ -21,6 +21,7 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:src="@drawable/camera_default" />
+
             <com.easefun.polyv.cloudclassdemo.watch.linkMic.widget.PolyvLinkMicWaveView
                 android:id="@+id/polyv_link_mic_sound_wave"
                 android:layout_width="match_parent"
@@ -54,8 +55,8 @@
             android:layout_marginLeft="@dimen/dm_10"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:maxWidth="@dimen/dm_134"
             android:maxLines="1"
+            android:maxWidth="@dimen/dm_134"
             android:textColor="@color/white"
             tools:text="a;lfjsdjfs;k" />
 

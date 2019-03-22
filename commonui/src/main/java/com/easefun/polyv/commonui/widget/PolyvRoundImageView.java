@@ -11,20 +11,17 @@ import com.blankj.utilcode.util.ConvertUtils;
 
 public class PolyvRoundImageView extends AppCompatImageView {
 
-    private Path mPath;
-    private int mRadius;
-
-    private int mWidth;
-    private int mHeight;
-    private int mLastRadius;
-
     public static final int MODE_NONE = 0;
     public static final int MODE_ALL = 1;
     public static final int MODE_LEFT = 2;
     public static final int MODE_TOP = 3;
     public static final int MODE_RIGHT = 4;
     public static final int MODE_BOTTOM = 5;
-
+    private Path mPath;
+    private int mRadius;
+    private int mWidth;
+    private int mHeight;
+    private int mLastRadius;
     private int mRoundMode = MODE_ALL;
 
     public PolyvRoundImageView(Context context) {

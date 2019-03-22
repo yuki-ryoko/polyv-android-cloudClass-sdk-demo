@@ -32,13 +32,17 @@ import com.easefun.polyv.foundationsdk.utils.PolyvScreenUtils;
 public abstract class PolyvCommonVideoHelper<T extends IPolyvVideoItem<P, Q>, P extends PolyvCommonVideoView,
         Q extends PolyvCommonMediacontroller<P>> {
     protected static final String TAG = "PolyvCommonVideoHelper";
+    protected static final Handler S_HANDLER;
+
+    static {
+        S_HANDLER = new Handler(Looper.getMainLooper());
+    }
+
     protected Context context;
     protected T videoItem;
-
     protected ViewGroup pptContianer;
     protected PolyvTouchContainerView pptParent;
     protected PolyvPPTView pptView;
-
     protected ViewGroup playerParent, playerView;
     protected ViewGroup subVideoviewParent;
     protected P videoView;
@@ -47,14 +51,7 @@ public abstract class PolyvCommonVideoHelper<T extends IPolyvVideoItem<P, Q>, P 
     protected Q controller;
     protected View loadingView, noStreamView;
     protected int videoViewVolume;
-
-    protected  static final Handler S_HANDLER;
-
     private boolean firstSwitchLocation = true;//第一次切换主副屏 不用动画
-
-    static {
-        S_HANDLER = new Handler(Looper.getMainLooper());
-    }
 
     public PolyvCommonVideoHelper(T videoItem, PolyvPPTItem polyvPPTItem) {
         this.videoItem = videoItem;
@@ -77,8 +74,8 @@ public abstract class PolyvCommonVideoHelper<T extends IPolyvVideoItem<P, Q>, P 
     }
 
     public void initPPT(T videoItem, PolyvPPTItem polyvPPTItem) {
-        if(polyvPPTItem != null){
-            pptView = (PolyvPPTView) polyvPPTItem.getPPTView();
+        if (polyvPPTItem != null) {
+            pptView = polyvPPTItem.getPPTView();
             pptContianer = polyvPPTItem.getItemRootView().findViewById(R.id.polyv_ppt_container);
             polyvPPTItem.addMediaController(controller);
             videoItem.bindPPTView(polyvPPTItem);
@@ -105,7 +102,7 @@ public abstract class PolyvCommonVideoHelper<T extends IPolyvVideoItem<P, Q>, P 
     public abstract void initConfig(boolean isNormalLive);
 
     public void addPPT(PolyvTouchContainerView container) {
-        if(pptContianer == null){
+        if (pptContianer == null) {
             return;
         }
         container.removeAllViews();
@@ -135,17 +132,17 @@ public abstract class PolyvCommonVideoHelper<T extends IPolyvVideoItem<P, Q>, P 
     }
 
     private void changeView(boolean changeToVideoView) {
-        if(pptContianer == null || pptView == null){
+        if (pptContianer == null || pptView == null) {
             return;
         }
-        PolyvCommonLog.d(TAG,"show ppt sub:"+changeToVideoView);
+        PolyvCommonLog.d(TAG, "show ppt sub:" + changeToVideoView);
         pptContianer.removeView(changeToVideoView ? pptView : playerView);
         videoView.removeView(changeToVideoView ? playerView : pptView);
 
         videoView.addView(changeToVideoView ? pptView : playerView, 0);
         pptContianer.addView(changeToVideoView ? playerView : pptView, 0);
 
-        startAnimation(changeToVideoView?pptView:playerView);
+        startAnimation(changeToVideoView ? pptView : playerView);
 
         if (changeToVideoView) {
 
@@ -176,29 +173,29 @@ public abstract class PolyvCommonVideoHelper<T extends IPolyvVideoItem<P, Q>, P 
     }
 
     protected void startAnimation(View animationView) {
-        float originScaleX = (float) PolyvScreenUtils.dip2px(context,144)/ ScreenUtils.getScreenWidth() ;
+        float originScaleX = (float) PolyvScreenUtils.dip2px(context, 144) / ScreenUtils.getScreenWidth();
         AnimatorSet animationSet = new AnimatorSet();
 
 
-        if(!firstSwitchLocation){
+        if (!firstSwitchLocation) {
             animationView.setPivotX(0);
             animationView.setPivotY(0);
             ObjectAnimator scaleAnimationX =
-                    ObjectAnimator.ofFloat(animationView,"scaleX",originScaleX,1);
+                    ObjectAnimator.ofFloat(animationView, "scaleX", originScaleX, 1);
             ObjectAnimator scaleAnimationY =
-                    ObjectAnimator.ofFloat(animationView,"scaleY",originScaleX,1);
+                    ObjectAnimator.ofFloat(animationView, "scaleY", originScaleX, 1);
             scaleAnimationX.setDuration(200);
             scaleAnimationY.setDuration(200);
             scaleAnimationX.setInterpolator(new LinearInterpolator());
             scaleAnimationY.setInterpolator(new LinearInterpolator());
-            animationSet.playTogether(scaleAnimationX,scaleAnimationY);
+            animationSet.playTogether(scaleAnimationX, scaleAnimationY);
             animationSet.start();
         }
         firstSwitchLocation = false;
     }
 
     public void showCamerView() {
-        if(pptParent != null){
+        if (pptParent != null) {
             pptParent.setVisibility(View.VISIBLE);
         }
     }
@@ -234,7 +231,7 @@ public abstract class PolyvCommonVideoHelper<T extends IPolyvVideoItem<P, Q>, P 
     }
 
     private void openVideoViewSound() {
-        if(videoView != null){
+        if (videoView != null) {
             videoView.setVolume(videoViewVolume);
         }
     }
@@ -249,8 +246,8 @@ public abstract class PolyvCommonVideoHelper<T extends IPolyvVideoItem<P, Q>, P 
 //        }
     }
 
-    public void resume(){
-        if(videoView != null && !videoView.isPlaying()){
+    public void resume() {
+        if (videoView != null && !videoView.isPlaying()) {
             videoView.start();
         }
 //

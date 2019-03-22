@@ -16,6 +16,13 @@ public class PolyvLightTipsView extends FrameLayout {
     //lightView
     private View view;
     private TextView tv_percent;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == View.GONE)
+                setVisibility(View.GONE);
+        }
+    };
 
     public PolyvLightTipsView(Context context) {
         this(context, null);
@@ -33,20 +40,12 @@ public class PolyvLightTipsView extends FrameLayout {
 
     private void initView() {
         hide();
-        tv_percent = (TextView) view.findViewById(R.id.tv_percent);
+        tv_percent = view.findViewById(R.id.tv_percent);
     }
 
     public void hide() {
         setVisibility(View.GONE);
     }
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == View.GONE)
-                setVisibility(View.GONE);
-        }
-    };
 
     public void setLightPercent(int brightness, boolean slideEnd) {
         handler.removeMessages(View.GONE);

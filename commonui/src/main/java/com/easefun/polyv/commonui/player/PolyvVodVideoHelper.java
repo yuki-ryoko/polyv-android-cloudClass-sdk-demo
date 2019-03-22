@@ -14,7 +14,7 @@ import com.easefun.polyv.foundationsdk.log.PolyvCommonLog;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class PolyvVodVideoHelper extends PolyvCommonVideoHelper<PolyvVodVideoItem,
-        PolyvVodVideoView,PolyvVodMediaController>{
+        PolyvVodVideoView, PolyvVodMediaController> {
     private static final String TAG = PolyvVodVideoHelper.class.getSimpleName();
     private int playPosition = -1;
     private boolean isPlayingOnStop;
@@ -28,7 +28,7 @@ public class PolyvVodVideoHelper extends PolyvCommonVideoHelper<PolyvVodVideoIte
 
         controller.addHelper(this);
         controller.updatePPTShowStatus(!isNoramlLivePlayBack);
-        if(!isNoramlLivePlayBack){
+        if (!isNoramlLivePlayBack) {
             controller.changePPTVideoLocation();
         }
     }
@@ -41,9 +41,9 @@ public class PolyvVodVideoHelper extends PolyvCommonVideoHelper<PolyvVodVideoIte
         videoView.stopPlay();
     }
 
-    public void setOptionPlay(PolyvBaseVideoParams params,int mode) {
+    public void setOptionPlay(PolyvBaseVideoParams params, int mode) {
         videoItem.resetUI();
-        videoView.playByMode(params,mode);
+        videoView.playByMode(params, mode);
 //        videoView.playFromHeadAd();
     }
 
@@ -69,7 +69,7 @@ public class PolyvVodVideoHelper extends PolyvCommonVideoHelper<PolyvVodVideoIte
             videoView.playTailAd();
         } else {
             Toast.makeText(context, "播放失败，没有开启片尾广告", Toast.LENGTH_SHORT).show();
-            PolyvCommonLog.i(TAG, "播放失败，没有开启片尾广告" + "&PlayOption：" );
+            PolyvCommonLog.i(TAG, "播放失败，没有开启片尾广告" + "&PlayOption：");
         }
     }
 

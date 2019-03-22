@@ -19,6 +19,7 @@ public class PolyvOrientoinListener extends OrientationEventListener {
     private Activity context;
     private int orientation;
     private PolyvCommonVideoHelper commonVideoHelper;
+
     public PolyvOrientoinListener(Context context, PolyvCommonVideoHelper commonVideoHelper) {
         this(context, SensorManager.SENSOR_DELAY_NORMAL, commonVideoHelper);
     }
@@ -29,8 +30,8 @@ public class PolyvOrientoinListener extends OrientationEventListener {
         initial(context);
     }
 
-    void initial(Context context){
-        if(context instanceof  Activity){
+    void initial(Context context) {
+        if (context instanceof Activity) {
             this.context = (Activity) context;
         }
     }
@@ -38,12 +39,12 @@ public class PolyvOrientoinListener extends OrientationEventListener {
     @Override
     public void onOrientationChanged(int orientation) {
         int clips = Math.abs(this.orientation - orientation);
-        if(context == null || commonVideoHelper == null || clips <30 || clips >330){
+        if (context == null || commonVideoHelper == null || clips < 30 || clips > 330) {
             return;
         }
         this.orientation = orientation;
         int screenOrientation = context.getResources().getConfiguration().orientation;
-        PolyvCommonLog.d(TAG,"onOrientationChanged:"+orientation);
+        PolyvCommonLog.d(TAG, "onOrientationChanged:" + orientation);
         if (((orientation >= 0) && (orientation < 45)) || (orientation > 315)) {    //设置竖屏
             if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && orientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
                 commonVideoHelper.changeToPortrait();

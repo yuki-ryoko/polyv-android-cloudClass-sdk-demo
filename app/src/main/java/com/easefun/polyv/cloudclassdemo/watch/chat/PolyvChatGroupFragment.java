@@ -52,7 +52,6 @@ import com.easefun.polyv.commonui.utils.PolyvPictureUtils;
 import com.easefun.polyv.commonui.utils.PolyvTextImageLoader;
 import com.easefun.polyv.commonui.utils.PolyvToast;
 import com.easefun.polyv.commonui.utils.PolyvUriPathHelper;
-import com.easefun.polyv.commonui.utils.glide.progress.PolyvMyProgressManager;
 import com.easefun.polyv.commonui.widget.PolyvCornerBgTextView;
 import com.easefun.polyv.commonui.widget.PolyvGreetingTextView;
 import com.easefun.polyv.commonui.widget.PolyvLikeIconView;
@@ -109,6 +108,13 @@ public class PolyvChatGroupFragment extends PolyvChatBaseFragment {
     private int count = 1;
     private Disposable gonggaoCdDisposable;
     private boolean isNormalLive = false;//是否普通直播
+
+    public static boolean isTeacherType(String userType) {
+        //这里把管理员、讲师、助教都视为只看讲师的类型，适用于只看讲师
+        return PolyvChatManager.USERTYPE_MANAGER.equals(userType)
+                || PolyvChatManager.USERTYPE_TEACHER.equals(userType)
+                || PolyvChatManager.USERTYPE_ASSISTANT.equals(userType);
+    }
 
     @Override
     public int layoutId() {
@@ -897,13 +903,6 @@ public class PolyvChatGroupFragment extends PolyvChatBaseFragment {
     //如果只看讲师，那么不能发言以及送花
     private boolean isOnlyWatchTeacher() {
         return onlyHostSwitch.isSelected();
-    }
-
-    public static boolean isTeacherType(String userType) {
-        //这里把管理员、讲师、助教都视为只看讲师的类型，适用于只看讲师
-        return PolyvChatManager.USERTYPE_MANAGER.equals(userType)
-                || PolyvChatManager.USERTYPE_TEACHER.equals(userType)
-                || PolyvChatManager.USERTYPE_ASSISTANT.equals(userType);
     }
 
     private void startMarquee(final CharSequence msg) {

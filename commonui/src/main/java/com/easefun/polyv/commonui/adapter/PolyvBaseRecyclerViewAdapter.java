@@ -11,11 +11,11 @@ import java.util.List;
 public abstract class PolyvBaseRecyclerViewAdapter extends
         RecyclerView.Adapter<PolyvBaseRecyclerViewAdapter.ClickableViewHolder> {
 
-    private Context context;
-
     protected RecyclerView mRecyclerView;
-
+    private Context context;
     private List<RecyclerView.OnScrollListener> mListeners = new ArrayList<>();
+    private OnItemClickListener itemClickListener;
+    private OnItemLongClickListener itemLongClickListener;
 
 
     public PolyvBaseRecyclerViewAdapter(RecyclerView recyclerView) {
@@ -42,50 +42,29 @@ public abstract class PolyvBaseRecyclerViewAdapter extends
         });
     }
 
-
     public void addOnScrollListener(RecyclerView.OnScrollListener listener) {
 
         mListeners.add(listener);
     }
-
-
-    public interface OnItemClickListener {
-
-        void onItemClick(int position, ClickableViewHolder holder);
-    }
-
-    interface OnItemLongClickListener {
-
-        boolean onItemLongClick(int position, ClickableViewHolder holder);
-    }
-
-    private OnItemClickListener itemClickListener;
-
-    private OnItemLongClickListener itemLongClickListener;
-
 
     public void setOnItemClickListener(OnItemClickListener listener) {
 
         this.itemClickListener = listener;
     }
 
-
     public void setOnItemLongClickListener(OnItemLongClickListener listener) {
 
         this.itemLongClickListener = listener;
     }
 
-
     public void bindContext(Context context) {
         this.context = context;
     }
-
 
     public Context getContext() {
 
         return this.context;
     }
-
 
     @Override
     public void onBindViewHolder(final ClickableViewHolder holder, final int position) {
@@ -107,6 +86,17 @@ public abstract class PolyvBaseRecyclerViewAdapter extends
         });
     }
 
+
+    public interface OnItemClickListener {
+
+        void onItemClick(int position, ClickableViewHolder holder);
+    }
+
+
+    interface OnItemLongClickListener {
+
+        boolean onItemLongClick(int position, ClickableViewHolder holder);
+    }
 
     public static class ClickableViewHolder extends RecyclerView.ViewHolder {
 

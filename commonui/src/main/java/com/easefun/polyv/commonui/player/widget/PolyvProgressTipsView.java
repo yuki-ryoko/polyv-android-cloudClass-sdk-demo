@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -20,7 +19,14 @@ public class PolyvProgressTipsView extends FrameLayout {
     private View view;
     private TextView tv_currenttime, tv_totaltime;
     private SeekBar seekBar;
-//    private ImageView iv_left, iv_right;
+    //    private ImageView iv_left, iv_right;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == View.GONE)
+                setVisibility(View.GONE);
+        }
+    };
 
     public PolyvProgressTipsView(Context context) {
         this(context, null);
@@ -38,8 +44,8 @@ public class PolyvProgressTipsView extends FrameLayout {
 
     private void initView() {
         hide();
-        tv_currenttime = (TextView) view.findViewById(R.id.tv_currenttime);
-        tv_totaltime = (TextView) view.findViewById(R.id.tv_totaltime);
+        tv_currenttime = view.findViewById(R.id.tv_currenttime);
+        tv_totaltime = view.findViewById(R.id.tv_totaltime);
         seekBar = view.findViewById(R.id.sb_playprogress);
     }
 
@@ -51,14 +57,6 @@ public class PolyvProgressTipsView extends FrameLayout {
         handler.removeMessages(View.GONE);
         handler.sendEmptyMessageDelayed(View.GONE, 300);
     }
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == View.GONE)
-                setVisibility(View.GONE);
-        }
-    };
 
     public void setProgressPercent(int fastForwardPos, int totaltime, boolean slideEnd, boolean isRightSwipe) {
         handler.removeMessages(View.GONE);

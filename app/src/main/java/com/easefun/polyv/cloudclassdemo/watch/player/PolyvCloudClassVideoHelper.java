@@ -28,8 +28,8 @@ import com.easefun.polyv.cloudclass.model.PolyvSocketSliceIdVO;
 import com.easefun.polyv.cloudclass.video.PolyvCloudClassVideoView;
 import com.easefun.polyv.cloudclassdemo.R;
 import com.easefun.polyv.cloudclassdemo.watch.linkMic.IPolyvDataBinder;
-import com.easefun.polyv.cloudclassdemo.watch.linkMic.PolyvNormalLiveLinkMicDataBinder;
 import com.easefun.polyv.cloudclassdemo.watch.linkMic.PolyvLinkMicDataBinder;
+import com.easefun.polyv.cloudclassdemo.watch.linkMic.PolyvNormalLiveLinkMicDataBinder;
 import com.easefun.polyv.cloudclassdemo.watch.linkMic.widget.IPolyvRotateBaseView;
 import com.easefun.polyv.commonui.PolyvCommonVideoHelper;
 import com.easefun.polyv.commonui.base.PolyvBaseActivity;
@@ -83,10 +83,10 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     private static final int LINK_JOIN_TIME = 20 * 1000;//加入连麦的超时事件
 
     private static final String JOIN_DEFAULT_TYPE = "JOIN_DEFAULT_TYPE";
-    private PolyvPermissionManager permissionManager;
-    protected PolyvChatManager polyvChatManager;
-    private Disposable linkJoinTimer,getLinkMicJoins;
     private static final int REQUEST_CODE = 612;
+    protected PolyvChatManager polyvChatManager;
+    private PolyvPermissionManager permissionManager;
+    private Disposable linkJoinTimer, getLinkMicJoins;
     private boolean joinSuccess, pptShowSub;
     private boolean camerShowInVideoView;//连麦是否显示再大屏
 
@@ -111,10 +111,162 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     private Map<String, PolyvJoinInfoEvent> joinRequests = new ConcurrentHashMap<>();
     private PolyvSocketSliceIdVO sliceIdVo;
     private String sessionId = "";
-    private boolean cameraOpen = true,showPPT;
+    private boolean cameraOpen = true, showPPT;
 
     private Disposable joinListTimer;
     private Set<Long> noCachesIds = new HashSet<>();//在缓存中没有找到数据得uid
+    PolyvLinkMicAGEventHandler polyvLinkMicAGEventHandler = new PolyvLinkMicAGEventHandler() {
+        @Override
+        public void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
+            super.onAudioVolumeIndication(speakers, totalVolume);
+            polyvLinkMicAdapter.startAudioWave(speakers, totalVolume);
+        }
+
+        @Override
+        public void onAudioQuality(int uid, int quality, short delay, short lost) {
+            super.onAudioQuality(uid, quality, delay, lost);
+
+        }
+
+        @Override
+        public void onFirstRemoteVideoDecoded(final int uid, final int width, final int height, final int elapsed) {
+            S_HANDLER.post(new Runnable() {
+                @Override
+                public void run() {
+                    PolyvCommonLog.d(TAG, "uid:" + uid);
+                    if (uid == PolyvLinkMicWrapper.getInstance().getEngineConfig().mUid) {
+                        PolyvCommonLog.d(TAG, "receive owner uid");
+                        return;
+                    }
+                }
+            });
+
+        }
+
+        @Override
+        public void onJoinChannelSuccess(String channel, final int uid, int elapsed) {
+            S_HANDLER.post(new Runnable() {
+                @Override
+                public void run() {
+                    long longUid = uid & 0xFFFFFFFFL;
+                    polyvLinkMicAdapter.addOwner(longUid + "", joinRequests.get(longUid + ""));
+                    sendJoinSuccess();
+                    cancleLinkTimer();
+                    hideSubView();
+                    pause();
+                    changeViewToRtc(true);
+                    joinSuccess = true;
+                }
+            });
+
+        }
+
+        @Override
+        public void onLeaveChannel(IRtcEngineEventHandler.RtcStats stats) {
+            PolyvCommonLog.d(TAG, "onLeaveChannel");
+            S_HANDLER.post(new Runnable() {
+                @Override
+                public void run() {
+//                    if(!joinSuccess){
+//                        return;
+//                    }
+                    PolyvCommonLog.d(TAG, "onLeaveChannel success");
+                    joinSuccess = false;
+                    cancleLinkTimer();
+                    restartPlay();//restartPlay();
+                    showSubView();
+                    changeViewToRtc(false);
+                    joinRequests.remove(PolyvLinkMicWrapper.getInstance().getLinkMicUid());
+                }
+            });
+        }
+
+        @Override
+        public void onUserOffline(final int uid, int reason) {
+            PolyvCommonLog.d(TAG, "onUserOffline");
+            S_HANDLER.post(new Runnable() {
+                @Override
+                public void run() {
+                    long longUid = uid & 0xFFFFFFFFL;
+                    PolyvJoinInfoEvent joinInfoEvent = joinRequests.remove(longUid);
+                    if (joinInfoEvent != null) {
+                        ToastUtils.showLong(joinInfoEvent.getNick() + "离开连麦室");
+                    }
+
+                    processUserOffline(longUid);
+                }
+            });
+
+
+        }
+
+        @Override
+        public void onUserJoined(final int uid, final int elapsed) {
+            S_HANDLER.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (sliceIdVo == null) {
+                        ToastUtils.showLong("请重新登录 获取正确状态");
+                        leaveChannel();
+                        return;
+                    }
+                    processJoinStatus(uid, elapsed);
+
+                }
+            });
+        }
+
+        @Override
+        public void onUserMuteVideo(final int uid, final boolean mute) {
+            long longUid = uid & 0xFFFFFFFFL;
+            final PolyvJoinInfoEvent joinInfo = joinRequests.get(longUid + "");
+            S_HANDLER.post(new Runnable() {
+                @Override
+                public void run() {
+                    String nick = "";
+                    if (joinInfo != null) {
+                        nick = joinInfo.getNick();
+                        int pos = joinInfo.getPos();
+                        joinInfo.setMute(mute);
+//                        if (pos != 0) {
+                        polyvLinkMicAdapter.notifyItemChanged(pos, mute);
+//                        }
+                    }
+                    ToastUtils.showLong(nick + (mute ? "摄像头已关闭" : "摄像头已打开"));
+
+
+                }
+            });
+
+        }
+
+        @Override
+        public void onUserMuteAudio(int uid, final boolean mute) {
+            long longUid = uid & 0xFFFFFFFFL;
+            final PolyvJoinInfoEvent joinInfo = joinRequests.get(longUid + "");
+
+            S_HANDLER.post(new Runnable() {
+                @Override
+                public void run() {
+                    String nick = "";
+                    if (joinInfo != null) {
+                        nick = joinInfo.getNick();
+                        int pos = joinInfo.getPos();
+//                    joinInfo.setMute(mute);
+//                    if(pos != 0){//不是老师的更新
+//                        polyvLinkMicAdapter.notifyItemChanged(pos);
+//                    }
+                        PolyvCommonLog.d(TAG, "pos :" + pos);
+                    }
+                    ToastUtils.showLong(nick + (mute ? "离开音频连麦" : "加入音频连麦"));
+
+                }
+            });
+
+        }
+
+    };
+
 
     public PolyvCloudClassVideoHelper(PolyvCloudClassVideoItem videoItem,
                                       PolyvPPTItem polyvPPTItem, PolyvChatManager polyvChatManager) {
@@ -131,7 +283,6 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
                 .addRequestCode(REQUEST_CODE)
                 .setPermissionsListener(this);
     }
-
 
     public PolyvCloudClassVideoHelper(PolyvCloudClassVideoItem videoItem, PolyvPPTItem polyvPPTItem) {
         super(videoItem, polyvPPTItem);
@@ -170,7 +321,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
 
     @Override
     public void pause() {
-        if(!showPPT){
+        if (!showPPT) {
             muteVideoView();
             return;
         }
@@ -182,7 +333,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     }
 
     private void muteVideoView() {
-        if(videoView != null){
+        if (videoView != null) {
             videoViewVolume = videoView.getVolume();
             videoView.setVolume(0);
         }
@@ -224,22 +375,22 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
             processMicPhone(micphoneStatus);
         } else if (ONSLICEID.equals(event)) {
             processSliceIdMessage(message);
-        } else if (ONSLICECONTROL.equals(event) ) {
+        } else if (ONSLICECONTROL.equals(event)) {
             PolyvCommonLog.d(TAG, "receive ONSLICECONTROL message");
             processMicSlice(message);
-        }else if(SE_SWITCH_MESSAGE.equals(event)){
-            if(joinSuccess){
+        } else if (SE_SWITCH_MESSAGE.equals(event)) {
+            if (joinSuccess) {
                 processSwitchView(message);
             }
-        }else if(O_TEACHER_INFO.equals(event)){
+        } else if (O_TEACHER_INFO.equals(event)) {
 
             processTeacherInfo(message);
         }
     }
 
     private void processTeacherInfo(String message) {
-        PolyvJoinInfoEvent joinInfoEvent = PolyvGsonUtil.fromJson(PolyvJoinInfoEvent.class,message);
-        joinRequests.put(joinInfoEvent.getUid(),joinInfoEvent);
+        PolyvJoinInfoEvent joinInfoEvent = PolyvGsonUtil.fromJson(PolyvJoinInfoEvent.class, message);
+        joinRequests.put(joinInfoEvent.getUid(), joinInfoEvent);
     }
 
     public void processJoinLeaveMessage(String message) {
@@ -283,7 +434,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
         initialCameraStatus();
     }
 
-    private void processSwitchView(String message) {
+    private void processSwitchView(final String message) {
         S_HANDLER.post(new Runnable() {
             @Override
             public void run() {
@@ -294,12 +445,12 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
                         polyvLinkMicAdapter.switchView(switchView.getUserId());
                     } else {
                         //教师位置默认在第一位（或者是在sdk大屏），当重新进来的时候，教师从小屏切换到主屏（pc） 就不需要调整
-                        if(mainScreenLinkView != null && switchView.getUserId().equals((String) mainScreenLinkView.getTag())){
+                        if (mainScreenLinkView != null && switchView.getUserId().equals(mainScreenLinkView.getTag())) {
                             return;
                         }
                         ViewGroup cameraView = polyvLinkMicAdapter.switchViewToMianScreen(switchView.getUserId());
                         try {
-                            if(cameraView == null){
+                            if (cameraView == null) {
                                 return;
                             }
                             setMainScreenSize(cameraView);
@@ -341,17 +492,17 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     }
 
     //是否需要去更新连麦人列表 第一次进来不用 只获取数据
-    private void getLinkMicJoins(boolean needUpdate) {
+    private void getLinkMicJoins(final boolean needUpdate) {
         cancleGetLinkMicJoinsTask();
 
-        getLinkMicJoins =  PolyvLinkMicWrapper.getInstance().getLinkStatus(
+        getLinkMicJoins = PolyvLinkMicWrapper.getInstance().getLinkStatus(
                 new PolyvrResponseCallback<PolyvLinkMicJoinStatus>() {
 
                     @Override
                     public void onSuccess(PolyvLinkMicJoinStatus data) {
                         initJoinDatas(data);
 
-                        if(needUpdate){
+                        if (needUpdate) {
                             processJoinUnCachesStatus();
                         }
                     }
@@ -363,13 +514,13 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     private void processJoinUnCachesStatus() {
         int size = noCachesIds.size();
         Iterator<Long> iterator = noCachesIds.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Long longUid = iterator.next();
-            PolyvJoinInfoEvent joinInfoEvent = joinRequests.get(longUid+"");
-            if(joinInfoEvent != null){
+            PolyvJoinInfoEvent joinInfoEvent = joinRequests.get(longUid + "");
+            if (joinInfoEvent != null) {
                 iterator.remove();
-                polyvLinkMicAdapter.addData(joinRequests.get(longUid + ""),true);
-                PolyvCommonLog.d(TAG, "processJoinUnCachesStatus :" + longUid );
+                polyvLinkMicAdapter.addData(joinRequests.get(longUid + ""), true);
+                PolyvCommonLog.d(TAG, "processJoinUnCachesStatus :" + longUid);
             }
         }
 
@@ -383,14 +534,14 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     }
 
     private void cancleGetLinkMicJoinsTask() {
-        if(getLinkMicJoins != null){
+        if (getLinkMicJoins != null) {
             getLinkMicJoins.dispose();
             getLinkMicJoins = null;
         }
     }
 
-    private void processMicSlice(String message) {
-        PolyvSocketSliceControlVO polyvSocketSliceControl = PolyvGsonUtil.
+    private void processMicSlice(final String message) {
+        final PolyvSocketSliceControlVO polyvSocketSliceControl = PolyvGsonUtil.
                 fromJson(PolyvSocketSliceControlVO.class, message);
         if (polyvSocketSliceControl != null && polyvSocketSliceControl.getData() != null) {
             cameraOpen = polyvSocketSliceControl.getData().getIsCamClosed() == 0;
@@ -398,7 +549,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
                 return;
             }
             polyvLinkMicAdapter.updateCamerStatus(cameraOpen);
-            View surfaceView = polyvLinkMicAdapter.getCameraView();
+            final View surfaceView = polyvLinkMicAdapter.getCameraView();
             if (surfaceView != null) {//关闭打开摄像头
                 S_HANDLER.post(new Runnable() {
                     @Override
@@ -459,9 +610,9 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
 
         List<PolyvJoinInfoEvent> joinListBeans = data.getJoinList();
         for (PolyvJoinInfoEvent joinListBean : joinListBeans) {
-            PolyvCommonLog.e(TAG,"join id is:"+joinListBean.getUserId());
+            PolyvCommonLog.e(TAG, "join id is:" + joinListBean.getUserId());
 //            if(!joinRequests.containsKey(joinListBean.getUserId()) || JOIN_DEFAULT_TYPE.equals(joinListBean.getUserType())){
-                joinRequests.put(joinListBean.getUserId(), joinListBean);
+            joinRequests.put(joinListBean.getUserId(), joinListBean);
 //            }
         }
     }
@@ -484,7 +635,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     }
 
     //20秒内如果定时器被取消 则表明joinchannel rtc的回掉成功 加入成功 否则 置位
-    private void startLinkTimer(boolean leave) {
+    private void startLinkTimer(final boolean leave) {
         if (linkJoinTimer != null) {
             linkJoinTimer.dispose();
         }
@@ -530,7 +681,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
         try {
             PolyvCommonLog.d(TAG, "changeToVideoView:" + changeToVideoView);
             ViewGroup teacherParent = linkMicLayout;
-            if(mainScreenLinkView == null){
+            if (mainScreenLinkView == null) {
                 mainScreenLinkView = polyvLinkMicAdapter.getFirstLinkMicView();
             }
 
@@ -552,7 +703,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
             teacherParent.addView(changeToVideoView ? mainScreenLinkView : pptView, 0, new ViewGroup.LayoutParams
                     (PolyvScreenUtils.dip2px(context, 144), PolyvScreenUtils.dip2px(context, 108)));
 
-            startAnimation(changeToVideoView?pptView:mainScreenLinkView);
+            startAnimation(changeToVideoView ? pptView : mainScreenLinkView);
             camerShowInVideoView = !changeToVideoView;
 
         } catch (Exception e) {
@@ -561,195 +712,43 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
 
     }
 
-    PolyvLinkMicAGEventHandler polyvLinkMicAGEventHandler = new PolyvLinkMicAGEventHandler() {
-        @Override
-        public void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
-            super.onAudioVolumeIndication(speakers, totalVolume);
-            polyvLinkMicAdapter.startAudioWave(speakers,totalVolume);
-        }
-
-        @Override
-        public void onAudioQuality(int uid, int quality, short delay, short lost) {
-            super.onAudioQuality(uid, quality, delay, lost);
-
-        }
-
-        @Override
-        public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
-            S_HANDLER.post(new Runnable() {
-                @Override
-                public void run() {
-                    PolyvCommonLog.d(TAG, "uid:" + uid);
-                    if (uid == PolyvLinkMicWrapper.getInstance().getEngineConfig().mUid) {
-                        PolyvCommonLog.d(TAG, "receive owner uid");
-                        return;
-                    }
-                }
-            });
-
-        }
-
-        @Override
-        public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-            S_HANDLER.post(new Runnable() {
-                @Override
-                public void run() {
-                    long longUid = uid & 0xFFFFFFFFL;
-                    polyvLinkMicAdapter.addOwner(longUid+"",joinRequests.get(longUid+""));
-                    sendJoinSuccess();
-                    cancleLinkTimer();
-                    hideSubView();
-                    pause();
-                    changeViewToRtc(true);
-                    joinSuccess = true;
-                }
-            });
-
-        }
-
-        @Override
-        public void onLeaveChannel(IRtcEngineEventHandler.RtcStats stats) {
-            PolyvCommonLog.d(TAG, "onLeaveChannel");
-            S_HANDLER.post(new Runnable() {
-                @Override
-                public void run() {
-//                    if(!joinSuccess){
-//                        return;
-//                    }
-                    PolyvCommonLog.d(TAG, "onLeaveChannel success");
-                    joinSuccess = false;
-                    cancleLinkTimer();
-                    restartPlay();//restartPlay();
-                    showSubView();
-                    changeViewToRtc(false);
-                    joinRequests.remove(PolyvLinkMicWrapper.getInstance().getLinkMicUid());
-                }
-            });
-        }
-
-        @Override
-        public void onUserOffline(int uid, int reason) {
-            PolyvCommonLog.d(TAG, "onUserOffline");
-            S_HANDLER.post(new Runnable() {
-                @Override
-                public void run() {
-                    long longUid = uid & 0xFFFFFFFFL;
-                    PolyvJoinInfoEvent joinInfoEvent = joinRequests.remove(longUid);
-                    if (joinInfoEvent != null) {
-                        ToastUtils.showLong(joinInfoEvent.getNick() + "离开连麦室");
-                    }
-
-                    processUserOffline(longUid);
-                }
-            });
-
-
-        }
-
-        @Override
-        public void onUserJoined(int uid, int elapsed) {
-            S_HANDLER.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (sliceIdVo == null) {
-                        ToastUtils.showLong("请重新登录 获取正确状态");
-                        leaveChannel();
-                        return;
-                    }
-                    processJoinStatus(uid, elapsed);
-
-                }
-            });
-        }
-
-        @Override
-        public void onUserMuteVideo(int uid, boolean mute) {
-            long longUid = uid & 0xFFFFFFFFL;
-            PolyvJoinInfoEvent joinInfo = joinRequests.get(longUid + "");
-            S_HANDLER.post(new Runnable() {
-                @Override
-                public void run() {
-                    String nick = "";
-                    if (joinInfo != null) {
-                        nick = joinInfo.getNick();
-                        int pos = joinInfo.getPos();
-                        joinInfo.setMute(mute);
-//                        if (pos != 0) {
-                            polyvLinkMicAdapter.notifyItemChanged(pos,mute);
-//                        }
-                    }
-                    ToastUtils.showLong(nick + (mute ? "摄像头已关闭" : "摄像头已打开"));
-
-
-                }
-            });
-
-        }
-
-        @Override
-        public void onUserMuteAudio(int uid, boolean mute) {
-            long longUid = uid & 0xFFFFFFFFL;
-            PolyvJoinInfoEvent joinInfo = joinRequests.get(longUid + "");
-
-            S_HANDLER.post(new Runnable() {
-                @Override
-                public void run() {
-                    String nick = "";
-                    if (joinInfo != null) {
-                        nick = joinInfo.getNick();
-                        int pos = joinInfo.getPos();
-//                    joinInfo.setMute(mute);
-//                    if(pos != 0){//不是老师的更新
-//                        polyvLinkMicAdapter.notifyItemChanged(pos);
-//                    }
-                        PolyvCommonLog.d(TAG, "pos :" + pos);
-                    }
-                    ToastUtils.showLong(nick + (mute ? "离开音频连麦" : "加入音频连麦"));
-
-                }
-            });
-
-        }
-
-    };
-
     public void processUserOffline(long longUid) {
-        int pos = polyvLinkMicAdapter.getJoinsPos(longUid+"");
+        int pos = polyvLinkMicAdapter.getJoinsPos(longUid + "");
 
-        if(pos == 0 && camerShowInVideoView){//主屏的连麦者被移除  讲师移到主屏
-            ViewGroup teacherView  = (ViewGroup) polyvLinkMicAdapter.getTeacherParentView();
+        if (pos == 0 && camerShowInVideoView) {//主屏的连麦者被移除  讲师移到主屏
+            ViewGroup teacherView = (ViewGroup) polyvLinkMicAdapter.getTeacherParentView();
 
             linkMicLayout.removeView(teacherView);
             videoView.removeView(mainScreenLinkView);
 
             setMainScreenSize(teacherView);
 
-            videoView.addView(teacherView, 0,new ViewGroup.LayoutParams
+            videoView.addView(teacherView, 0, new ViewGroup.LayoutParams
                     (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            linkMicLayout.addView(mainScreenLinkView,polyvLinkMicAdapter.getJoinsPos((String) teacherView.getTag()), new ViewGroup.LayoutParams
+            linkMicLayout.addView(mainScreenLinkView, polyvLinkMicAdapter.getJoinsPos((String) teacherView.getTag()), new ViewGroup.LayoutParams
                     (PolyvScreenUtils.dip2px(context, 144), PolyvScreenUtils.dip2px(context, 108)));
 
-            polyvLinkMicAdapter.updateSwitchViewStatus((String) teacherView.getTag(),(String)mainScreenLinkView.getTag());
+            polyvLinkMicAdapter.updateSwitchViewStatus((String) teacherView.getTag(), (String) mainScreenLinkView.getTag());
             mainScreenLinkView = teacherView;
         }
 
-        polyvLinkMicAdapter.removeData(longUid + "",true);
+        polyvLinkMicAdapter.removeData(longUid + "", true);
 
 
     }
 
-    private void processJoinStatus(int uid,int elapsed) {
+    private void processJoinStatus(int uid, int elapsed) {
         long longUid = uid & 0xFFFFFFFFL;
-        if(!joinRequests.containsKey(""+longUid)){//不包含 需要更新数据
+        if (!joinRequests.containsKey("" + longUid)) {//不包含 需要更新数据
             PolyvJoinInfoEvent defaultEvent = createDefaultJoin(longUid);
-            joinRequests.put(longUid+"",defaultEvent);
+            joinRequests.put(longUid + "", defaultEvent);
             noCachesIds.add(longUid);
 
             //3秒以后去查询 数据  以免同时多个人加入
             startJoinListTimer();
             return;
         }
-        polyvLinkMicAdapter.addData(joinRequests.get(longUid + ""),true);
+        polyvLinkMicAdapter.addData(joinRequests.get(longUid + ""), true);
 
 //        linkMicLayoutParent.scrollToPosition(polyvLinkMicAdapter.getItemCount() - 1,linkMicLayout);
 
@@ -761,7 +760,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     @NonNull
     private PolyvJoinInfoEvent createDefaultJoin(long longUid) {
         PolyvJoinInfoEvent defaultEvent = new PolyvJoinInfoEvent();
-        defaultEvent.setUserId(longUid+"");
+        defaultEvent.setUserId(longUid + "");
         defaultEvent.setNick("");
         defaultEvent.setUserType(JOIN_DEFAULT_TYPE);
         return defaultEvent;
@@ -778,7 +777,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     }
 
     private void cancleJoinListTimer() {
-        if(joinListTimer != null){
+        if (joinListTimer != null) {
             joinListTimer.dispose();
             joinListTimer = null;
         }
@@ -789,13 +788,13 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     }
 
     private void showSubView() {
-        if(polyvChatManager != null){
+        if (polyvChatManager != null) {
             polyvChatManager.sendJoinLeave(PolyvLinkMicWrapper.getInstance().getLinkMicUid());
         }
         linkMicLayout.setVisibility(View.GONE);
         linkMicLayoutParent.enableShow(false);
         linkMicLayoutParent.setVisibility(View.GONE);
-        if(pptContianer != null){
+        if (pptContianer != null) {
             pptContianer.setVisibility(VISIBLE);
         }
         if (camerShowInVideoView) {
@@ -808,10 +807,10 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
         linkMicLayoutParent.enableShow(true);
         linkMicLayoutParent.setVisibility(VISIBLE);
 
-        if(pptContianer != null){
+        if (pptContianer != null) {
             pptContianer.setVisibility(INVISIBLE);
         }
-        if(controller == null){
+        if (controller == null) {
             return;
         }
         if (controller.isPPTSubView()) {
@@ -875,7 +874,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
             Toast.makeText(context, "您当前无法申请发言", Toast.LENGTH_SHORT).show();
             return;
         }
-        PolyvCommonLog.d(TAG,"onGranted");
+        PolyvCommonLog.d(TAG, "onGranted");
         controller.handsUp(joinSuccess);
         return;
     }
@@ -914,9 +913,9 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
     }
 
     private void clearLinkStatus() {
-        if(joinSuccess){
+        if (joinSuccess) {
             PolyvLinkMicWrapper.getInstance().leaveChannel();
-        }else {
+        } else {
             leaveChannel();
         }
 
@@ -927,7 +926,7 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
         PolyvLinkMicWrapper.getInstance().removeEventHandler(polyvLinkMicAGEventHandler);
     }
 
-    public void addLinkMicLayout(LinearLayout linkMicLayout, IPolyvRotateBaseView linkMicLayoutParent) {
+    public void addLinkMicLayout(final LinearLayout linkMicLayout, final IPolyvRotateBaseView linkMicLayoutParent) {
         this.linkMicLayout = linkMicLayout;
         this.linkMicLayoutParent = linkMicLayoutParent;
 
@@ -935,16 +934,16 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
             @Override
             public void onLayoutChange(View v, int left, int top, int right,
                                        int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if(oldRight < right){
-                    linkMicLayoutParent.scrollToPosition(0,linkMicLayout);
+                if (oldRight < right) {
+                    linkMicLayoutParent.scrollToPosition(0, linkMicLayout);
                 }
             }
         });
 
-        if(showPPT){
+        if (showPPT) {
             polyvLinkMicAdapter = new PolyvLinkMicDataBinder
                     (PolyvLinkMicWrapper.getInstance().getEngineConfig().mUid + "");
-        }else{
+        } else {
             polyvLinkMicAdapter = new PolyvNormalLiveLinkMicDataBinder
                     (PolyvLinkMicWrapper.getInstance().getEngineConfig().mUid + "");
             polyvLinkMicAdapter.bindLinkMicFrontView(linkMicLayoutParent.getOwnView());
@@ -969,21 +968,22 @@ public class PolyvCloudClassVideoHelper extends PolyvCommonVideoHelper<PolyvClou
 
     /**
      * 更新控制栏 主副平切换按钮得状态  （切换 或者是 显示副屏）
+     *
      * @param polyvSocketMessage
      */
-    public void updateMainScreenStatus(String polyvSocketMessage,String event) {
+    public void updateMainScreenStatus(String polyvSocketMessage, String event) {
         PolyvSocketSliceControlVO polyvSocketSliceControl = PolyvGsonUtil.
                 fromJson(PolyvSocketSliceControlVO.class, polyvSocketMessage);
         if (polyvSocketSliceControl != null && polyvSocketSliceControl.getData() != null) {
-            videoView.updateMainScreenStatus(polyvSocketSliceControl.getData().getIsCamClosed() == 0 );
+            videoView.updateMainScreenStatus(polyvSocketSliceControl.getData().getIsCamClosed() == 0);
         }
-        if(polyvSocketSliceControl.getData().getIsCamClosed() == 1){//关闭摄像头
-            if(controller != null){
+        if (polyvSocketSliceControl.getData().getIsCamClosed() == 1) {//关闭摄像头
+            if (controller != null) {
                 controller.showCamerView();
             }
         }
 
-        if(pptView != null){
+        if (pptView != null) {
             pptView.processSocketMessage(new PolyvSocketMessageVO(polyvSocketMessage, event));
         }
     }

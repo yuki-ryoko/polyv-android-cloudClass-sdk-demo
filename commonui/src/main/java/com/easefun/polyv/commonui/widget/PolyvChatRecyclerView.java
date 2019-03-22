@@ -13,16 +13,13 @@ import android.view.View;
 import android.widget.TextView;
 
 public class PolyvChatRecyclerView extends RecyclerView {
+    private static final int FLAG_SCROLL = 1;
     //未读item数
     private int unreadCount;
     private TextView unreadView;
-
     private boolean lastScrollVertically_One;
     private boolean heightZero;
     private boolean hasScrollEvent;
-
-    private static final int FLAG_SCROLL = 1;
-
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override

@@ -31,7 +31,7 @@ import io.agora.rtc.video.VideoCanvas;
  * @create 2018/11/13
  * @Describe 用于展示云课堂的适配器
  */
-public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
+public class PolyvLinkMicDataBinder extends IPolyvDataBinder {
     private static final String TAG = "PolyvLinkMicDataBinder";
     private static final int CAMERA_VIEW_ID = 817;
 
@@ -82,13 +82,13 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams
                 (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         surfaceView.setLayoutParams(layoutParams);
-        if(surfaceView != null){
+        if (surfaceView != null) {
             polyvMicHodler.camerLayout.addView(surfaceView, 1);
         }
 
         cachesView.add(surfaceView);
 
-        if(child != null){
+        if (child != null) {
             parentView.addView(child, pos);
         }
         return polyvMicHodler;
@@ -143,7 +143,7 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
         }
         long longUid = Long.valueOf(uid);
         if (uid.equals(myUid)) {
-             PolyvLinkMicWrapper.getInstance().setupLocalVideo(surfaceView,
+            PolyvLinkMicWrapper.getInstance().setupLocalVideo(surfaceView,
                     VideoCanvas.RENDER_MODE_HIDDEN, (int) longUid);
         } else {
             PolyvLinkMicWrapper.getInstance().setupRemoteVideo(surfaceView,
@@ -190,15 +190,15 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
         surfaceView.setVisibility(mute ? View.INVISIBLE : View.VISIBLE);
     }
 
-    public void switchView(String originUid){
+    public void switchView(String originUid) {
         PolyvJoinInfoEvent joinInfoEvent = joins.get(originUid);
         PolyvJoinInfoEvent firstInfo = joins.get(uids.get(0));
-        if(joinInfoEvent == null){
-            PolyvCommonLog.e(TAG,"no such uid");
-            return ;
+        if (joinInfoEvent == null) {
+            PolyvCommonLog.e(TAG, "no such uid");
+            return;
         }
         //教师位置默认在第一位，当重新进来的时候，教师从小屏切换到主屏 就不需要调整
-        if(joinInfoEvent.getPos() == 0){
+        if (joinInfoEvent.getPos() == 0) {
             return;
         }
 
@@ -208,12 +208,12 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
         parentView.removeView(firstView);
         parentView.removeView(switchView);
 
-        parentView.addView(switchView,0);
-        parentView.addView(firstView,joinInfoEvent.getPos());
+        parentView.addView(switchView, 0);
+        parentView.addView(firstView, joinInfoEvent.getPos());
 
         String isSwitchUid = uids.get(0);
-        uids.set(0,uids.get(joinInfoEvent.getPos()));
-        uids.set(joinInfoEvent.getPos(),isSwitchUid);
+        uids.set(0, uids.get(joinInfoEvent.getPos()));
+        uids.set(joinInfoEvent.getPos(), isSwitchUid);
 
         firstInfo.setPos(joinInfoEvent.getPos());
         joinInfoEvent.setPos(0);
@@ -221,55 +221,32 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
 
     public ViewGroup switchViewToMianScreen(String userId) {
         PolyvJoinInfoEvent joinInfoEvent = joins.get(userId);
-        if(joinInfoEvent == null){
+        if (joinInfoEvent == null) {
             return null;
         }
-        PolyvCommonLog.e(TAG,"switchViewToMianScreen pos :"+joinInfoEvent.getPos());
+        PolyvCommonLog.e(TAG, "switchViewToMianScreen pos :" + joinInfoEvent.getPos());
         return (ViewGroup) parentView.getChildAt(joinInfoEvent.getPos());
     }
 
-    public int getJoinsPos(String uid){
+    public int getJoinsPos(String uid) {
         PolyvJoinInfoEvent joinInfoEvent = joins.get(uid);
-        if(joinInfoEvent == null){
+        if (joinInfoEvent == null) {
             return -1;
         }
         return joinInfoEvent.getPos();
     }
 
     public void updateSwitchViewStatus(String subLinkMicViewUid, String mainLinkMicViewUid) {
-        PolyvCommonLog.e(TAG,"subLinkMicViewUid:"+subLinkMicViewUid+"  mainLinkMicViewUid:"+mainLinkMicViewUid);
+        PolyvCommonLog.e(TAG, "subLinkMicViewUid:" + subLinkMicViewUid + "  mainLinkMicViewUid:" + mainLinkMicViewUid);
         PolyvJoinInfoEvent joinInfoEvent = joins.get(subLinkMicViewUid);
         PolyvJoinInfoEvent firstInfo = joins.get(mainLinkMicViewUid);
 
         String isSwitchUid = mainLinkMicViewUid;
-        uids.set(0,subLinkMicViewUid);
-        uids.set(joinInfoEvent.getPos(),isSwitchUid);
+        uids.set(0, subLinkMicViewUid);
+        uids.set(joinInfoEvent.getPos(), isSwitchUid);
 
         firstInfo.setPos(joinInfoEvent.getPos());
         joinInfoEvent.setPos(0);
-    }
-
-    public class PolyvMicHodler extends RecyclerView.ViewHolder {
-
-        public View camer;
-        public ImageView cameraSwitch;
-        public TextView polyvLinkNick;
-        public FrameLayout camerLayout;
-        public int pos;
-
-        public PolyvMicHodler(View itemView) {
-            super(itemView);
-            camer = itemView.findViewById(R.id.polyv_link_camera_switch_container);
-            cameraSwitch = itemView.findViewById(R.id.polyv_camera_switch);
-            polyvLinkNick = itemView.findViewById(R.id.polyv_link_nick);
-            camerLayout = itemView.findViewById(R.id.polyv_link_mic_camera_layout);
-            cameraSwitch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PolyvLinkMicWrapper.getInstance().switchCamera();
-                }
-            });
-        }
     }
 
     public ViewGroup getFirstLinkMicView() {
@@ -301,7 +278,6 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
         }
         return cameraView;
     }
-
 
     public synchronized void addData(PolyvJoinInfoEvent requestSEvent, boolean updateImmidately) {
         if (requestSEvent == null || joins.containsKey(requestSEvent.getUserId()) || TextUtils.isEmpty(requestSEvent.getUserId())) {
@@ -358,7 +334,7 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
         }
     }
 
-    public void removeData(String uid,boolean removeView) {
+    public void removeData(String uid, boolean removeView) {
         if (TextUtils.isEmpty(uid)) {
             return;
         }
@@ -369,7 +345,7 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
             pos = infoEvent.getPos();
         }
         PolyvCommonLog.d(TAG, "remove pos :" + pos);
-        if(removeView){
+        if (removeView) {
             notifyItemRemoved(pos);
         }
 
@@ -379,10 +355,10 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
     private void notifyItemRemoved(int pos) {
         if (parentView != null) {
 
-            if(parentView.getChildAt(pos) != null){
+            if (parentView.getChildAt(pos) != null) {
                 parentView.removeViewAt(pos);
-            }else {
-                ToastUtils.showLong("notifyItemRemoved:is null"+pos);
+            } else {
+                ToastUtils.showLong("notifyItemRemoved:is null" + pos);
             }
         }
     }
@@ -404,6 +380,29 @@ public class PolyvLinkMicDataBinder extends IPolyvDataBinder{
             }
         }
         cachesView.clear();
+    }
+
+    public class PolyvMicHodler extends RecyclerView.ViewHolder {
+
+        public View camer;
+        public ImageView cameraSwitch;
+        public TextView polyvLinkNick;
+        public FrameLayout camerLayout;
+        public int pos;
+
+        public PolyvMicHodler(View itemView) {
+            super(itemView);
+            camer = itemView.findViewById(R.id.polyv_link_camera_switch_container);
+            cameraSwitch = itemView.findViewById(R.id.polyv_camera_switch);
+            polyvLinkNick = itemView.findViewById(R.id.polyv_link_nick);
+            camerLayout = itemView.findViewById(R.id.polyv_link_mic_camera_layout);
+            cameraSwitch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PolyvLinkMicWrapper.getInstance().switchCamera();
+                }
+            });
+        }
     }
 
 }

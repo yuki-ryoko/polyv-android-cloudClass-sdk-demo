@@ -24,15 +24,6 @@ public class PolyvEmoListAdapter extends PolyvBaseRecyclerViewAdapter {
         emoLists = new ArrayList<>(PolyvFaceManager.getInstance().getFaceMap().keySet());
     }
 
-    public class EmoItemViewHolder extends PolyvBaseRecyclerViewAdapter.ClickableViewHolder {
-        private ImageView emo;
-
-        public EmoItemViewHolder(View itemView) {
-            super(itemView);
-            emo = $(R.id.iv_emo);
-        }
-    }
-
     @NonNull
     @Override
     public ClickableViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -87,6 +78,15 @@ public class PolyvEmoListAdapter extends PolyvBaseRecyclerViewAdapter {
                     outRect.top = spacing; // item top
                 }
             }
+        }
+    }
+
+    public class EmoItemViewHolder extends PolyvBaseRecyclerViewAdapter.ClickableViewHolder {
+        private ImageView emo;
+
+        public EmoItemViewHolder(View itemView) {
+            super(itemView);
+            emo = $(R.id.iv_emo);
         }
     }
 }

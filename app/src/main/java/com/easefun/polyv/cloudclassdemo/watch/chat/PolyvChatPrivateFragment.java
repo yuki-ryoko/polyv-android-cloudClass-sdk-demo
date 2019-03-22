@@ -12,7 +12,6 @@ import com.easefun.polyv.commonui.R;
 import com.easefun.polyv.commonui.utils.PolyvChatEventBus;
 import com.easefun.polyv.commonui.utils.PolyvTextImageLoader;
 import com.easefun.polyv.commonui.utils.PolyvToast;
-import com.easefun.polyv.commonui.utils.glide.progress.PolyvMyProgressManager;
 
 import io.reactivex.functions.Consumer;
 
@@ -39,9 +38,6 @@ public class PolyvChatPrivateFragment extends PolyvChatBaseFragment {
     private void addQuestionTips() {
         //添加自定义的问候语事件
         chatListAdapter.getChatTypeItems().add(new PolyvChatListAdapter.ChatTypeItem(new PolyvQuestionTipsEvent(), PolyvChatListAdapter.ChatTypeItem.TYPE_RECEIVE));
-    }
-
-    public class PolyvQuestionTipsEvent {
     }
 
     @Override
@@ -108,5 +104,8 @@ public class PolyvChatPrivateFragment extends PolyvChatBaseFragment {
                 toast.makeText(getContext(), "聊天室异常，无法接收信息！\n" + throwable.getMessage(), PolyvToast.LENGTH_LONG).show(true);
             }
         }));
+    }
+
+    public class PolyvQuestionTipsEvent {
     }
 }

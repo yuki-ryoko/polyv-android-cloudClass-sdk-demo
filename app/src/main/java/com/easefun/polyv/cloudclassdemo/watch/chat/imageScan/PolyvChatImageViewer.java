@@ -60,6 +60,21 @@ public class PolyvChatImageViewer extends FrameLayout {
         init(context);
     }
 
+    public static String getImgUrl(PolyvChatListAdapter.ChatTypeItem chatTypeItem) {
+        String chatImgUrl = null;
+        if (chatTypeItem.object instanceof PolyvChatImgEvent) {
+            PolyvChatImgEvent chatImgEvent = (PolyvChatImgEvent) chatTypeItem.object;
+            chatImgUrl = chatImgEvent.getValues().get(0).getUploadImgUrl();
+        } else if (chatTypeItem.object instanceof PolyvChatImgHistory) {
+            PolyvChatImgHistory chatImgHistory = (PolyvChatImgHistory) chatTypeItem.object;
+            chatImgUrl = chatImgHistory.getContent().getUploadImgUrl();
+        } else if (chatTypeItem.object instanceof PolyvSendLocalImgEvent) {
+            PolyvSendLocalImgEvent sendLocalImgEvent = (PolyvSendLocalImgEvent) chatTypeItem.object;
+            chatImgUrl = sendLocalImgEvent.getImageFilePath();
+        }
+        return chatImgUrl;
+    }
+
     private void init(Context context) {
         view = LayoutInflater.from(context).inflate(R.layout.polyv_image_viewpager, this);
         vpImageViewer = view.findViewById(R.id.vp_image_viewer);
@@ -173,21 +188,6 @@ public class PolyvChatImageViewer extends FrameLayout {
 
     private void toast(String message) {
         toast.makeText(getContext(), message, PolyvToast.LENGTH_SHORT).show();
-    }
-
-    public static String getImgUrl(PolyvChatListAdapter.ChatTypeItem chatTypeItem) {
-        String chatImgUrl = null;
-        if (chatTypeItem.object instanceof PolyvChatImgEvent) {
-            PolyvChatImgEvent chatImgEvent = (PolyvChatImgEvent) chatTypeItem.object;
-            chatImgUrl = chatImgEvent.getValues().get(0).getUploadImgUrl();
-        } else if (chatTypeItem.object instanceof PolyvChatImgHistory) {
-            PolyvChatImgHistory chatImgHistory = (PolyvChatImgHistory) chatTypeItem.object;
-            chatImgUrl = chatImgHistory.getContent().getUploadImgUrl();
-        } else if (chatTypeItem.object instanceof PolyvSendLocalImgEvent) {
-            PolyvSendLocalImgEvent sendLocalImgEvent = (PolyvSendLocalImgEvent) chatTypeItem.object;
-            chatImgUrl = sendLocalImgEvent.getImageFilePath();
-        }
-        return chatImgUrl;
     }
 
     public void setPermissionManager(PolyvPermissionManager permissionManager) {

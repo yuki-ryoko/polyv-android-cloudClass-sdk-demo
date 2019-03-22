@@ -71,12 +71,12 @@ public class PolyvChatListAdapter extends PolyvBaseRecyclerViewAdapter {
         this.chatTypeItems = chatTypeItems;
     }
 
-    public void setChatTypeItems(List<ChatTypeItem> chatTypeItems) {
-        this.chatTypeItems = chatTypeItems;
-    }
-
     public List<ChatTypeItem> getChatTypeItems() {
         return chatTypeItems;
+    }
+
+    public void setChatTypeItems(List<ChatTypeItem> chatTypeItems) {
+        this.chatTypeItems = chatTypeItems;
     }
 
     public Map<String, List<Integer>> getLoadImgMap() {
@@ -122,86 +122,6 @@ public class PolyvChatListAdapter extends PolyvBaseRecyclerViewAdapter {
 
     public void setOnResendMessageViewClickListener(OnResendMessageViewClickListener l) {
         this.onResendMessageViewClickListener = l;
-    }
-
-    public interface OnChatImgViewClickListener {
-        void onClick(ImageView iv, int position);
-    }
-
-    public interface OnResendMessageViewClickListener {
-        void onClick(ImageView iv, int position);
-    }
-
-    public static class ChatTypeItem {
-        public static final int TYPE_RECEIVE = 0;
-        public static final int TYPE_SEND = 1;
-        public static final int TYPE_TIPS = 2;
-
-        @IntDef({
-                TYPE_RECEIVE,
-                TYPE_SEND,
-                TYPE_TIPS
-        })
-        @Retention(RetentionPolicy.SOURCE)
-        @interface Type {
-        }
-
-        public Object object;
-        public int type;
-
-        public ChatTypeItem(Object object, @Type int type) {
-            this.object = object;
-            this.type = type;
-        }
-
-        @Override
-        public String toString() {
-            return "ChatTypeItem{" +
-                    "object=" + object +
-                    ", type=" + type +
-                    '}';
-        }
-    }
-
-    public class ReceiveMessageHolder extends PolyvBaseRecyclerViewAdapter.ClickableViewHolder {
-        public ImageView avatar;
-        public TextView type/*头衔*/, nick;
-        public GifSpanTextView receiveMessage;
-        public ImageView chatImg;
-        public PolyvCircleProgressView imgLoading;
-
-        public ReceiveMessageHolder(View itemView) {
-            super(itemView);
-            avatar = $(R.id.iv_avatar);
-            type = $(R.id.tv_type);
-            nick = $(R.id.tv_nick);
-            receiveMessage = $(R.id.gtv_receive_message);
-            chatImg = $(R.id.iv_chat_img);
-            imgLoading = $(R.id.cpv_img_loading);
-        }
-    }
-
-    public class SendMessageHolder extends PolyvBaseRecyclerViewAdapter.ClickableViewHolder {
-        public GifSpanTextView sendMessage;
-        public ImageView chatImg, resendMessageButton;
-        public PolyvCircleProgressView imgLoading;
-
-        public SendMessageHolder(View itemView) {
-            super(itemView);
-            sendMessage = $(R.id.gtv_send_message);
-            chatImg = $(R.id.iv_chat_img);
-            imgLoading = $(R.id.cpv_img_loading);
-            resendMessageButton = $(R.id.resend_message_button);
-        }
-    }
-
-    public class TipsMessageHolder extends PolyvBaseRecyclerViewAdapter.ClickableViewHolder {
-        public TextView tipsMessage;
-
-        public TipsMessageHolder(View itemView) {
-            super(itemView);
-            tipsMessage = $(R.id.tv_tips_message);
-        }
     }
 
     @NonNull
@@ -378,7 +298,7 @@ public class PolyvChatListAdapter extends PolyvBaseRecyclerViewAdapter {
         }
     }
 
-    private void loadNetImg(String chatImg, int position, ProgressBar imgLoading, ImageView imageView) {
+    private void loadNetImg(String chatImg, final int position, final ProgressBar imgLoading, final ImageView imageView) {
         PolyvMyProgressManager.removeListener(chatImg, position);
         final PolyvOnProgressListener onProgressListener = new PolyvOnProgressListener() {
             @Override
@@ -463,7 +383,7 @@ public class PolyvChatListAdapter extends PolyvBaseRecyclerViewAdapter {
                 .into(view);
     }
 
-    private void handleSendMessage(SendMessageHolder sendMessageHolder, Object object, int position) {
+    private void handleSendMessage(final SendMessageHolder sendMessageHolder, Object object, final int position) {
         sendMessageHolder.imgLoading.setTag(position);
         if (!(object instanceof PolyvSendLocalImgEvent || object instanceof PolyvChatImgHistory)) {
             sendMessageHolder.resendMessageButton.setVisibility(View.GONE);
@@ -562,6 +482,44 @@ public class PolyvChatListAdapter extends PolyvBaseRecyclerViewAdapter {
         return chatTypeItems.get(position).type;
     }
 
+    public interface OnChatImgViewClickListener {
+        void onClick(ImageView iv, int position);
+    }
+
+    public interface OnResendMessageViewClickListener {
+        void onClick(ImageView iv, int position);
+    }
+
+    public static class ChatTypeItem {
+        public static final int TYPE_RECEIVE = 0;
+        public static final int TYPE_SEND = 1;
+        public static final int TYPE_TIPS = 2;
+        public Object object;
+        public int type;
+
+        public ChatTypeItem(Object object, @Type int type) {
+            this.object = object;
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return "ChatTypeItem{" +
+                    "object=" + object +
+                    ", type=" + type +
+                    '}';
+        }
+
+        @IntDef({
+                TYPE_RECEIVE,
+                TYPE_SEND,
+                TYPE_TIPS
+        })
+        @Retention(RetentionPolicy.SOURCE)
+        @interface Type {
+        }
+    }
+
     public static class SpacesItemDecoration extends RecyclerView.ItemDecoration {
 
         private int space;
@@ -582,6 +540,47 @@ public class PolyvChatListAdapter extends PolyvBaseRecyclerViewAdapter {
             } else {
                 outRect.top = 0;
             }
+        }
+    }
+
+    public class ReceiveMessageHolder extends PolyvBaseRecyclerViewAdapter.ClickableViewHolder {
+        public ImageView avatar;
+        public TextView type/*头衔*/, nick;
+        public GifSpanTextView receiveMessage;
+        public ImageView chatImg;
+        public PolyvCircleProgressView imgLoading;
+
+        public ReceiveMessageHolder(View itemView) {
+            super(itemView);
+            avatar = $(R.id.iv_avatar);
+            type = $(R.id.tv_type);
+            nick = $(R.id.tv_nick);
+            receiveMessage = $(R.id.gtv_receive_message);
+            chatImg = $(R.id.iv_chat_img);
+            imgLoading = $(R.id.cpv_img_loading);
+        }
+    }
+
+    public class SendMessageHolder extends PolyvBaseRecyclerViewAdapter.ClickableViewHolder {
+        public GifSpanTextView sendMessage;
+        public ImageView chatImg, resendMessageButton;
+        public PolyvCircleProgressView imgLoading;
+
+        public SendMessageHolder(View itemView) {
+            super(itemView);
+            sendMessage = $(R.id.gtv_send_message);
+            chatImg = $(R.id.iv_chat_img);
+            imgLoading = $(R.id.cpv_img_loading);
+            resendMessageButton = $(R.id.resend_message_button);
+        }
+    }
+
+    public class TipsMessageHolder extends PolyvBaseRecyclerViewAdapter.ClickableViewHolder {
+        public TextView tipsMessage;
+
+        public TipsMessageHolder(View itemView) {
+            super(itemView);
+            tipsMessage = $(R.id.tv_tips_message);
         }
     }
 }

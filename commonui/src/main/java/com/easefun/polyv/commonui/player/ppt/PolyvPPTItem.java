@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.easefun.polyv.businesssdk.api.common.ppt.IPolyvPPTView;
 import com.easefun.polyv.commonui.PolyvCommonMediacontroller;
 import com.easefun.polyv.commonui.R;
 import com.easefun.polyv.foundationsdk.log.PolyvCommonLog;
@@ -53,7 +52,7 @@ public class PolyvPPTItem<T extends PolyvCommonMediacontroller> extends
     }
 
     public void show(int show) {
-        PolyvCommonLog.d(TAG,"show polyvPPTWebView:"+show);
+        PolyvCommonLog.d(TAG, "show polyvPPTWebView:" + show);
         polyvPptView.polyvPPTWebView.setVisibility(show);
         polyvPptView.pptLoadingView.setVisibility(show == VISIBLE ? INVISIBLE : VISIBLE);
         if (hasClosed) {

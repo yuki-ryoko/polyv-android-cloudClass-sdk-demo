@@ -21,7 +21,7 @@ import com.easefun.polyv.foundationsdk.utils.PolyvScreenUtils;
  * @create 2018/10/18
  * @Describe
  */
-public class PolyvLinkMicListView extends HorizontalScrollView implements IPolyvRotateBaseView{
+public class PolyvLinkMicListView extends HorizontalScrollView implements IPolyvRotateBaseView {
     private static final String TAG = "PolyvLinkMicListView";
     // 竖屏下的位置
     private int portraitLeft = 0;
@@ -35,20 +35,21 @@ public class PolyvLinkMicListView extends HorizontalScrollView implements IPolyv
     private int originTop = 0;
 
     public PolyvLinkMicListView(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public PolyvLinkMicListView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public PolyvLinkMicListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public void initView(Context context){
+    public void initView(Context context) {
         scroller = new Scroller(context);
     }
+
     @Override
     protected void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -168,7 +169,7 @@ public class PolyvLinkMicListView extends HorizontalScrollView implements IPolyv
 
     public void scrollToPosition(int pos, View parent) {
 
-        smoothScrollTo(parent.getRight(),0);
+        smoothScrollTo(parent.getRight(), 0);
     }
 
     @Override
@@ -177,7 +178,7 @@ public class PolyvLinkMicListView extends HorizontalScrollView implements IPolyv
     }
 
     @Override
-    public void enableShow( boolean canshow) {
+    public void enableShow(boolean canshow) {
 
     }
 

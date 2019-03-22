@@ -43,6 +43,7 @@ import retrofit2.adapter.rxjava2.HttpException;
  */
 public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements View.OnClickListener {
 
+    private static final String TAG = "PolyvCloudClassLoginAct";
     // <editor-fold defaultstate="collapsed" desc="成员变量">
     private ImageView loginLogo;
     private TextView loginLogoText;
@@ -56,12 +57,25 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
     private EditText playbackVideoId;
     private EditText playbackAppId, playbackAppSecrect;
     private RelativeLayout liveGroupLayout;
-    private RelativeLayout playbackGroupLayout;
-    private Disposable getTokenDisposable,verifyDispose;
-    private ProgressDialog progress;
+    // <editor-fold defaultstate="collapsed" desc="textWatcher监听">
+    TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
-    private static final String TAG = "PolyvCloudClassLoginAct";
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            checkLoginTvSelected();
+        }
+    };
+    private RelativeLayout playbackGroupLayout;
+    private Disposable getTokenDisposable, verifyDispose;
     // </editor-fold>
+    private ProgressDialog progress;
 
     // <editor-fold defaultstate="collapsed" desc="生命周期">
     @Override
@@ -78,6 +92,7 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
         super.onRestart();
         checkLoginTvSelected();
     }
+    // </editor-fold>
 
     @Override
     protected void onDestroy() {
@@ -86,7 +101,6 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
             getTokenDisposable.dispose();
         }
     }
-    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="初始化">
     private void initialView() {
@@ -115,7 +129,7 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
                 if (getTokenDisposable != null) {
                     getTokenDisposable.dispose();
                 }
-                if(verifyDispose != null){
+                if (verifyDispose != null) {
                     verifyDispose.dispose();
                 }
                 loginTv.setEnabled(true);
@@ -147,6 +161,8 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
         playbackAppSecrect.addTextChangedListener(textWatcher);
     }
 
+    // </editor-fold>
+
     private void intialLogoView() {
         loginLogo = findViewById(R.id.login_logo);
         loginLogoText = findViewById(R.id.login_logo_text);
@@ -162,15 +178,14 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
 
         loginTv.setOnClickListener(this);
     }
-
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="设置测试数据">
     private void setTestData() {
-        appId.setText("");
-        appSecert.setText("");
-        userId.setText("");
-        channelId.setText("");
+//        appId.setText("");
+//        appSecert.setText("");
+//        userId.setText("");
+//        channelId.setText("");
 
         playbackVideoId.setText("");
         playbackAppId.setText("");
@@ -193,7 +208,6 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
                 break;
         }
     }
-    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="View显示控制">
     private void showTitleLogo(boolean showlog) {
@@ -213,6 +227,7 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
                 && (!TextUtils.isEmpty(channelId.getText())
                 && !TextUtils.isEmpty(appId.getText())));
     }
+    // </editor-fold>
 
     private void showPlayBackGroup() {
         liveGroupLayout.setSelected(false);
@@ -224,23 +239,6 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
         loginTv.setSelected(!isEmpty(playbackAppId)
                 && !isEmpty(playbackVideoId));
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="textWatcher监听">
-    TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            checkLoginTvSelected();
-        }
-    };
 
     private void checkLoginTvSelected() {
         if (liveGroupLayout.isSelected()) {
@@ -277,7 +275,7 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
         }
     }
 
-    private void checkToken(String userId, String appSecret, String channel, String vid, String appId) {
+    private void checkToken(final String userId, final String appSecret, final String channel, final String vid, final String appId) {
         //请求token接口
         getTokenDisposable = PolyvLoginManager.checkLoginToken(userId, appSecret, appId,
                 channel, vid,
@@ -288,7 +286,7 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
                         PolyvLiveSDKClient.getInstance().setAppIdSecret(appId, appSecert.getText().toString());
                         PolyvVodSDKClient.getInstance().initConfig(appId, appSecert.getText().toString());
 
-                        if(playbackGroupLayout.isSelected()){
+                        if (playbackGroupLayout.isSelected()) {
 
 //                            startActivityForPlayback(false);
                             requestPlayBackStatus(vid);
@@ -314,7 +312,7 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
     }
 
     private void requestPlayBackStatus(String vid) {
-        if(TextUtils.isEmpty(vid)){
+        if (TextUtils.isEmpty(vid)) {
             return;
         }
         verifyDispose = PolyvLoginManager.getPlayBackType(vid, new PolyvrResponseCallback<PolyvPlayBackVO>() {
@@ -324,18 +322,18 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
                 startActivityForPlayback(isLivePlayBack);
             }
 
-           @Override
-           public void onFailure(PolyvResponseBean<PolyvPlayBackVO> responseBean) {
-               super.onFailure(responseBean);
-               failedStatus(responseBean.getMessage());
-           }
+            @Override
+            public void onFailure(PolyvResponseBean<PolyvPlayBackVO> responseBean) {
+                super.onFailure(responseBean);
+                failedStatus(responseBean.getMessage());
+            }
 
-           @Override
-           public void onError(Throwable e) {
-               super.onError(e);
-               errorStatus(e);
-           }
-       });
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                errorStatus(e);
+            }
+        });
     }
 
     public void failedStatus(String message) {
@@ -359,7 +357,7 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
         }
     }
 
-    private void requestLiveStatus(String userId) {
+    private void requestLiveStatus(final String userId) {
         verifyDispose = PolyvResponseExcutor.excuteUndefinData(PolyvApiManager.getPolyvLiveStatusApi().geLiveStatusJson(channelId.getText().toString())
                 , new PolyvrResponseCallback<PolyvLiveStatusVO>() {
                     @Override
@@ -399,7 +397,7 @@ public class PolyvCloudClassLoginActivity extends PolyvBaseActivity implements V
     private void startActivityForPlayback(boolean isNormalLivePlayBack) {
         progress.dismiss();
         PolyvCloudClassHomeActivity.startActivityForPlayBack(PolyvCloudClassLoginActivity.this,
-                playbackVideoId.getText().toString().trim(),isNormalLivePlayBack);
+                playbackVideoId.getText().toString().trim(), isNormalLivePlayBack);
     }
     // </editor-fold>
 

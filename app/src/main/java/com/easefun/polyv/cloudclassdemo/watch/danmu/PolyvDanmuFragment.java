@@ -44,7 +44,7 @@ public class PolyvDanmuFragment extends Fragment {
     }
 
     private void findIdAndNew() {
-        mDanmakuView = (IDanmakuView) view.findViewById(R.id.dv_danmaku);
+        mDanmakuView = view.findViewById(R.id.dv_danmaku);
         mDanmakuView.hide();
     }
 

@@ -6,9 +6,9 @@ import com.jakewharton.rxrelay2.ReplayRelay;
 import io.reactivex.Observable;
 
 public class PolyvChatEventBus {
+    private static PolyvChatEventBus rxBusReplay;
     //xxxRelay的xxx等同于xxxSuject/xxxProcessor
     private final Relay<Object> mBus;
-    private static PolyvChatEventBus rxBusReplay;
 
     private PolyvChatEventBus() {
         // toSerialized method made bus thread safe

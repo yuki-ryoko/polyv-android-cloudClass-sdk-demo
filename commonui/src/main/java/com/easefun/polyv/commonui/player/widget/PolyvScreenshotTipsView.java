@@ -43,12 +43,12 @@ public class PolyvScreenshotTipsView extends FrameLayout {
 
     private void initView() {
         hide();
-        iv_gallery = (ImageView) view.findViewById(R.id.iv_gallery);
-        rl_top = (RelativeLayout) findViewById(R.id.rl_top);
-        rl_bot = (RelativeLayout) findViewById(R.id.rl_bot);
-        pb_progress = (ProgressBar) findViewById(R.id.pb_progress);
-        tv_tips = (TextView) findViewById(R.id.tv_tips);
-        bt_close = (Button) view.findViewById(R.id.bt_close);
+        iv_gallery = view.findViewById(R.id.iv_gallery);
+        rl_top = findViewById(R.id.rl_top);
+        rl_bot = findViewById(R.id.rl_bot);
+        pb_progress = findViewById(R.id.pb_progress);
+        tv_tips = findViewById(R.id.tv_tips);
+        bt_close = view.findViewById(R.id.bt_close);
         bt_close.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -29,7 +29,6 @@
                 android:textSize="@dimen/dm_20" />
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/tv_sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,10 +36,10 @@
                 android:layout_toRightOf="@id/tv_currenttime"
                 android:text=" / "
                 android:textColor="#ffffff"
-                android:textSize="@dimen/dm_30" />
+                android:textSize="@dimen/dm_30"
+                android:visibility="gone" />
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/tv_totaltime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -48,7 +47,8 @@
                 android:layout_toRightOf="@id/tv_sp"
                 android:text="08:22"
                 android:textColor="#ffffff"
-                android:textSize="@dimen/dm_30" />
+                android:textSize="@dimen/dm_30"
+                android:visibility="gone" />
         </LinearLayout>
 
         <SeekBar

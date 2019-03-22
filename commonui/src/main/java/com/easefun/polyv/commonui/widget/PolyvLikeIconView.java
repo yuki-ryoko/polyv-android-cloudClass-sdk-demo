@@ -32,6 +32,9 @@ public class PolyvLikeIconView extends RelativeLayout {
 
     private Interpolator[] interpolators;
     private Random random = new Random();
+    private OnClickListener onButtonClickListener;
+    private int[] color = new int[]{0xFF9D86D2, 0xFFF25268, 0xFF5890FF, 0xFFFCBC71};
+    private Random randomColor = new Random();
 
     public PolyvLikeIconView(Context context) {
         this(context, null);
@@ -87,8 +90,6 @@ public class PolyvLikeIconView extends RelativeLayout {
         }
     }
 
-    private OnClickListener onButtonClickListener;
-
     public void setOnButtonClickListener(@Nullable OnClickListener l) {
         onButtonClickListener = l;
     }
@@ -134,9 +135,6 @@ public class PolyvLikeIconView extends RelativeLayout {
         addView(view);
         startAnimator(view);
     }
-
-    private int[] color = new int[]{0xFF9D86D2, 0xFFF25268, 0xFF5890FF, 0xFFFCBC71};
-    private Random randomColor = new Random();
 
     public void addLoveIcon() {
         if (height <= 0 || width <= 0)

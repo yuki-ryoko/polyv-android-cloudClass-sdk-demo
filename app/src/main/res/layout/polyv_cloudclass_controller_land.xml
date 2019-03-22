@@ -39,14 +39,13 @@
             android:layout_width="36dp"
             android:layout_height="16dp"
             android:layout_marginRight="@dimen/controller_margin"
-            android:layout_toLeftOf="@id/bitrate_change_land" />
+            android:layout_toLeftOf="@+id/bitrate_change_land" />
 
         <TextView
-            android:visibility="gone"
-            android:layout_marginRight="@dimen/dm_10"
             android:id="@+id/bitrate_change_land"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/dm_48"
+            android:layout_marginRight="@dimen/dm_10"
             android:gravity="center"
             android:shadowColor="#FF000000"
             android:shadowDx="3"
@@ -54,8 +53,9 @@
             android:shadowRadius="2"
             android:src="@drawable/brate"
             android:text="@string/most_definition"
+            android:textColor="@color/white"
 
-            android:textColor="@color/white" />
+            android:visibility="gone" />
     </LinearLayout>
 
     <ImageView
@@ -68,12 +68,12 @@
         android:src="@drawable/exchange" />
 
     <ImageView
-        android:visibility="invisible"
         android:id="@+id/video_hands_up_land"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/video_ppt_change_switch_land"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="@dimen/controller_margin"
-        android:src="@drawable/polyv_mic_phone_selector" />
+        android:src="@drawable/polyv_mic_phone_selector"
+        android:visibility="invisible" />
 </RelativeLayout>

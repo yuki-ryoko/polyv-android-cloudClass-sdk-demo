@@ -55,6 +55,7 @@ public class PolyvCloudClassVideoItem extends FrameLayout
         implements IPolyvVideoItem<PolyvCloudClassVideoView, PolyvCloudClassMediaController>, View.OnClickListener {
 
     private static final String TAG = "PolyvCloudClassVideoIte";
+    private static final String NICK_NAME = "nick_name";
     private AppCompatActivity context;
     private PolyvCloudClassMediaController controller;
     private PolyvCloudClassVideoView polyvCloudClassVideoView;
@@ -85,13 +86,8 @@ public class PolyvCloudClassVideoItem extends FrameLayout
     private TextView tvSkip;
     private PolyvDanmuFragment danmuFragment;
     private String nickName;
-
     /**** --------------------- ppt --------------------***/
     private PolyvPPTItem polyvPPTItem;
-
-
-    private static final String NICK_NAME = "nick_name";
-
     private Runnable hideTask = new Runnable() {
         @Override
         public void run() {
@@ -239,7 +235,7 @@ public class PolyvCloudClassVideoItem extends FrameLayout
         polyvCloudClassVideoView.setOnPPTShowListener(new IPolyvVideoViewListenerEvent.OnPPTShowListener() {
             @Override
             public void showPPTView(int visiable) {
-                if(visiable == VISIBLE){
+                if (visiable == VISIBLE) {
                     controller.switchPPTToMainScreen();
                 }
                 if (polyvPPTItem != null) {
@@ -258,8 +254,8 @@ public class PolyvCloudClassVideoItem extends FrameLayout
         polyvCloudClassVideoView.setOnCameraShowListener(new IPolyvCloudClassListenerEvent.OnCameraShowListener() {
             @Override
             public void cameraOpen(boolean open) {
-                if(!open){
-                    if(polyvPPTItem != null){
+                if (!open) {
+                    if (polyvPPTItem != null) {
                         polyvPPTItem.hideSubView();
                     }
                 }
@@ -340,11 +336,11 @@ public class PolyvCloudClassVideoItem extends FrameLayout
         polyvCloudClassVideoView.setMicroPhoneListener(new IPolyvCloudClassListenerEvent.MicroPhoneListener() {
             @Override
             public void showMicPhoneLine(int visiable) {
-                PolyvCommonLog.d(TAG,"showMicPhoneLine");
+                PolyvCommonLog.d(TAG, "showMicPhoneLine");
                 if (controller != null) {
                     controller.showMicPhoneLine(visiable);
                 }
-                if(visiable == INVISIBLE){//关闭连麦
+                if (visiable == INVISIBLE) {//关闭连麦
                     PolyvLinkMicWrapper.getInstance().leaveChannel();
                 }
             }
@@ -354,13 +350,14 @@ public class PolyvCloudClassVideoItem extends FrameLayout
     }
 
     public void showDefaultIcon() {
-        if(loadingview != null){
+        if (loadingview != null) {
             loadingview.setVisibility(GONE);
         }
-        if(noStream != null){
+        if (noStream != null) {
             noStream.setVisibility(VISIBLE);
         }
     }
+
     @Override
     public View getView() {
         return rootView;
@@ -485,7 +482,7 @@ public class PolyvCloudClassVideoItem extends FrameLayout
                     controller.changePPTVideoLocation();
                 }
 
-                if(polyvPPTItem != null){
+                if (polyvPPTItem != null) {
                     polyvPPTItem.hideSubView();
                 }
             }

@@ -15,14 +15,6 @@ import com.easefun.polyv.commonui.R;
 public class PolyvMarqueeTextView extends AppCompatTextView {
 
     /**
-     * 默认滚动时间
-     */
-    private static final int ROLLING_INTERVAL_DEFAULT = 10000;
-    /**
-     * 第一次滚动默认延迟
-     */
-    private static final int FIRST_SCROLL_DELAY_DEFAULT = 1000;
-    /**
      * 滚动模式-一直滚动
      */
     public static final int SCROLL_FOREVER = 100;
@@ -30,7 +22,14 @@ public class PolyvMarqueeTextView extends AppCompatTextView {
      * 滚动模式-只滚动一次
      */
     public static final int SCROLL_ONCE = 101;
-
+    /**
+     * 默认滚动时间
+     */
+    private static final int ROLLING_INTERVAL_DEFAULT = 10000;
+    /**
+     * 第一次滚动默认延迟
+     */
+    private static final int FIRST_SCROLL_DELAY_DEFAULT = 1000;
     /**
      * 滚动器
      */
@@ -62,6 +61,7 @@ public class PolyvMarqueeTextView extends AppCompatTextView {
     private Runnable runnable;
     private int rollDuration;
     private boolean isStopToCenter;
+    private OnGetRollDurationListener onGetRollDurationListener;
 
     public PolyvMarqueeTextView(Context context) {
         this(context, null);
@@ -85,12 +85,6 @@ public class PolyvMarqueeTextView extends AppCompatTextView {
         setSingleLine();
         setEllipsize(null);
     }
-
-    public interface OnGetRollDurationListener {
-        void onFirstGetRollDuration(int rollDuration);
-    }
-
-    private OnGetRollDurationListener onGetRollDurationListener;
 
     public void setOnGetRollDurationListener(OnGetRollDurationListener onGetRollDurationListener) {
         this.onGetRollDurationListener = onGetRollDurationListener;
@@ -253,11 +247,6 @@ public class PolyvMarqueeTextView extends AppCompatTextView {
         return mRollingInterval;
     }
 
-    //实际滚动的时间，可能为0
-    public int getRollDuration() {
-        return rollDuration;
-    }
-
     /**
      * 设置滚动一次的时间(文本的宽度刚好和控件的宽度相等时的时间)
      */
@@ -265,11 +254,9 @@ public class PolyvMarqueeTextView extends AppCompatTextView {
         this.mRollingInterval = duration;
     }
 
-    /**
-     * 设置滚动模式
-     */
-    public void setScrollMode(int mode) {
-        this.mScrollMode = mode;
+    //实际滚动的时间，可能为0
+    public int getRollDuration() {
+        return rollDuration;
     }
 
     /**
@@ -280,10 +267,10 @@ public class PolyvMarqueeTextView extends AppCompatTextView {
     }
 
     /**
-     * 设置第一次滚动延迟
+     * 设置滚动模式
      */
-    public void setScrollFirstDelay(int delay) {
-        this.mFirstScrollDelay = delay;
+    public void setScrollMode(int mode) {
+        this.mScrollMode = mode;
     }
 
     /**
@@ -293,7 +280,18 @@ public class PolyvMarqueeTextView extends AppCompatTextView {
         return mFirstScrollDelay;
     }
 
+    /**
+     * 设置第一次滚动延迟
+     */
+    public void setScrollFirstDelay(int delay) {
+        this.mFirstScrollDelay = delay;
+    }
+
     public boolean isPaused() {
         return mPaused;
+    }
+
+    public interface OnGetRollDurationListener {
+        void onFirstGetRollDuration(int rollDuration);
     }
 }

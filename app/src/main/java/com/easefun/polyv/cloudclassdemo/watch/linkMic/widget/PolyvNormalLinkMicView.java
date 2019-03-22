@@ -4,14 +4,12 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.bumptech.glide.request.RequestOptions;
 import com.easefun.polyv.foundationsdk.log.PolyvCommonLog;
 import com.easefun.polyv.foundationsdk.utils.PolyvScreenUtils;
 
@@ -43,7 +41,7 @@ public class PolyvNormalLinkMicView extends LinearLayout implements IPolyvRotate
     }
 
     @Override
-    public void topSubviewTo(int top) {
+    public void topSubviewTo(final int top) {
         post(new Runnable() {
             @Override
             public void run() {
@@ -101,7 +99,7 @@ public class PolyvNormalLinkMicView extends LinearLayout implements IPolyvRotate
 
         rlp.leftMargin = 0;
         rlp.topMargin = originTop;
-        if(canShow){
+        if (canShow) {
             super.setVisibility(VISIBLE);
         }
         setLayoutParams(rlp);
@@ -158,7 +156,7 @@ public class PolyvNormalLinkMicView extends LinearLayout implements IPolyvRotate
 
     @Override
     public void setVisibility(int visibility) {
-        if(PolyvScreenUtils.isPortrait(getContext())){
+        if (PolyvScreenUtils.isPortrait(getContext())) {
             super.setVisibility(visibility);
         }
     }

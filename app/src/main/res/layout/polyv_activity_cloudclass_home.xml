@@ -36,18 +36,18 @@
     <!--android:layout_height="@dimen/ppt_height"-->
     <!--android:visibility="invisible" />-->
     <ViewStub
-        android:layout="@layout/link_mic_layout"
         android:id="@+id/polyv_link_mic_stub"
-        android:inflatedId="@+id/polyv_link_mic_id"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/ppt_height" />
+        android:layout_height="@dimen/ppt_height"
+        android:inflatedId="@+id/polyv_link_mic_id"
+        android:layout="@layout/link_mic_layout" />
 
 
     <ViewStub
-        android:layout="@layout/normal_live_link_mic_layout"
         android:id="@+id/polyv_normal_live_link_mic_stub"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dm_60" />
+        android:layout_height="@dimen/dm_60"
+        android:layout="@layout/normal_live_link_mic_layout" />
 
     <com.easefun.polyv.commonui.widget.PolyvAnswerView
         android:id="@+id/answer_layout"

@@ -21,10 +21,10 @@ import com.easefun.polyv.businesssdk.api.common.player.listener.IPolyvVideoViewL
 import com.easefun.polyv.businesssdk.vodplayer.PolyvVodVideoView;
 import com.easefun.polyv.commonui.R;
 import com.easefun.polyv.commonui.player.IPolyvVideoItem;
+import com.easefun.polyv.commonui.player.PolyvMediaInfoType;
 import com.easefun.polyv.commonui.player.ppt.PolyvPPTItem;
 import com.easefun.polyv.foundationsdk.log.PolyvCommonLog;
 import com.easefun.polyv.foundationsdk.utils.PolyvControlUtils;
-import com.easefun.polyv.commonui.player.PolyvMediaInfoType;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
@@ -73,16 +73,16 @@ public class PolyvVodVideoItem extends FrameLayout implements View.OnClickListen
             throw new RuntimeException("must use activity create videoitem");
         this.context = (Activity) context;
         this.view = LayoutInflater.from(this.context).inflate(R.layout.polyv_video_item, this);
-        videoView = (PolyvVodVideoView) findViewById(R.id.pb_videoview);
-        subVideoview = (PolyvAuxiliaryVideoview) findViewById(R.id.sub_videoview);
-        controller = (PolyvVodMediaController) findViewById(R.id.controller);
-        loadingview = (ProgressBar) findViewById(R.id.loadingview);
-        subLoadingview = (ProgressBar) findViewById(R.id.sub_loadingview);
-        polyvLightTipsView = (PolyvLightTipsView) findViewById(R.id.tipsview_light);
-        tipsviewVolume = (PolyvVolumeTipsView) findViewById(R.id.tipsview_volume);
-        tipsviewProgress = (PolyvProgressTipsView) findViewById(R.id.tipsview_progress);
-        tvCountdown = (TextView) findViewById(R.id.tv_countdown);
-        tvSkip = (TextView) findViewById(R.id.tv_skip);
+        videoView = findViewById(R.id.pb_videoview);
+        subVideoview = findViewById(R.id.sub_videoview);
+        controller = findViewById(R.id.controller);
+        loadingview = findViewById(R.id.loadingview);
+        subLoadingview = findViewById(R.id.sub_loadingview);
+        polyvLightTipsView = findViewById(R.id.tipsview_light);
+        tipsviewVolume = findViewById(R.id.tipsview_volume);
+        tipsviewProgress = findViewById(R.id.tipsview_progress);
+        tvCountdown = findViewById(R.id.tv_countdown);
+        tvSkip = findViewById(R.id.tv_skip);
         tvSkip.setOnClickListener(this);
 //        sub_hud_view = (TableLayout) findViewById(R.id.sub_hud_view);
         preparingview = findViewById(R.id.preparingview);
@@ -210,7 +210,7 @@ public class PolyvVodVideoItem extends FrameLayout implements View.OnClickListen
         videoView.setOnPPTShowListener(new IPolyvVideoViewListenerEvent.OnPPTShowListener() {
             @Override
             public void showPPTView(int visiable) {
-                if(polyvPPTItem != null){
+                if (polyvPPTItem != null) {
                     polyvPPTItem.show(visiable);
                 }
             }
@@ -446,7 +446,7 @@ public class PolyvVodVideoItem extends FrameLayout implements View.OnClickListen
     public void bindPPTView(PolyvPPTItem polyvPPTItem) {
 
         this.polyvPPTItem = polyvPPTItem;
-        if(videoView != null && polyvPPTItem != null){
+        if (videoView != null && polyvPPTItem != null) {
             videoView.bindPPTView(polyvPPTItem.getPPTView());
         }
     }
@@ -454,17 +454,17 @@ public class PolyvVodVideoItem extends FrameLayout implements View.OnClickListen
     @Override
     public void destroy() {
 
-        if(polyvPPTItem !=  null && polyvPPTItem.getPPTView() != null){
+        if (polyvPPTItem != null && polyvPPTItem.getPPTView() != null) {
             polyvPPTItem.getPPTView().destroy();
             polyvPPTItem = null;
         }
 
-        if(polyvLightTipsView != null){
+        if (polyvLightTipsView != null) {
             polyvLightTipsView.removeAllViews();
             polyvLightTipsView = null;
         }
 
-        if(tipsviewVolume != null){
+        if (tipsviewVolume != null) {
             tipsviewVolume.removeAllViews();
             tipsviewVolume = null;
         }

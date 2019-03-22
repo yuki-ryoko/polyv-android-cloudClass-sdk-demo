@@ -48,15 +48,14 @@
             android:src="@drawable/fullscreen" />
 
         <TextView
-            android:visibility="gone"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:text="@string/most_definition"
             android:id="@+id/bitrate_change"
             android:layout_width="@dimen/dm_48"
             android:layout_height="@dimen/dm_48"
             android:layout_toLeftOf="@+id/iv_orientation"
-             />
+            android:gravity="center"
+            android:text="@string/most_definition"
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/bt_speed_port"

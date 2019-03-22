@@ -4,12 +4,8 @@ package com.easefun.polyv.commonui.player.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.easefun.polyv.foundationsdk.utils.PolyvControlUtils;
-import com.easefun.polyv.foundationsdk.utils.PolyvUtils;
-
-import tv.cjump.jni.DeviceUtils;
 
 public class PolyvSoftView extends LinearLayout {
 
@@ -24,6 +20,22 @@ public class PolyvSoftView extends LinearLayout {
     private int mStatusBarHeight = 0;
 
     private IOnKeyboardStateChangedListener onKeyboardStateChangedListener;
+
+    public PolyvSoftView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        mStatusBarHeight = PolyvControlUtils.getStatusBarHeight(context);
+    }
+
+    public PolyvSoftView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        mStatusBarHeight = PolyvControlUtils.getStatusBarHeight(context);
+    }
+
+
+    public PolyvSoftView(Context context) {
+        super(context);
+        mStatusBarHeight = PolyvControlUtils.getStatusBarHeight(context);
+    }
 
     public void setOnKeyboardStateChangedListener(
             IOnKeyboardStateChangedListener onKeyboardStateChangedListener) {
@@ -57,26 +69,9 @@ public class PolyvSoftView extends LinearLayout {
         }
     }
 
-
-
     public interface IOnKeyboardStateChangedListener {
 
         void onKeyboardStateChanged(int state);
-    }
-
-    public PolyvSoftView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        mStatusBarHeight = PolyvControlUtils.getStatusBarHeight(context);
-    }
-
-    public PolyvSoftView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        mStatusBarHeight = PolyvControlUtils.getStatusBarHeight(context);
-    }
-
-    public PolyvSoftView(Context context) {
-        super(context);
-        mStatusBarHeight = PolyvControlUtils.getStatusBarHeight(context);
     }
 
 }

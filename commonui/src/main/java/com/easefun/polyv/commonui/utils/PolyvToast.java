@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PolyvToast {
-    private static final int REMOVE = 1;
     public static final int LENGTH_SHORT = Toast.LENGTH_SHORT;
     public static final int LENGTH_LONG = Toast.LENGTH_LONG;
+    private static final int REMOVE = 1;
     private static final int LONG_DELAY = 2750;
     private static final int SHORT_DELAY = 1250;
     private List<Toast> toasts = new ArrayList<>();

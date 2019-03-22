@@ -26,20 +26,20 @@ public class PolyvTouchContainerView extends FrameLayout {
     private float lastX, lastY;
 
     // 竖屏下的位置
-    private int originLeft,portraitLeft = 0;
-    private int originTop,portraitTop = 0;
+    private int originLeft, portraitLeft = 0;
+    private int originTop, portraitTop = 0;
 
     //键盘弹起前得位置
     private int beforeSoftLeft = 0;
     private int beforeSoftTop = 0;
-    private RotateTask rotateTask ;
+    private RotateTask rotateTask;
 
     public PolyvTouchContainerView(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public PolyvTouchContainerView(Context context, AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public PolyvTouchContainerView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -51,10 +51,10 @@ public class PolyvTouchContainerView extends FrameLayout {
         rotateTask = new RotateTask();
     }
 
-    public void initParam(int left ,int top){
+    public void initParam(int left, int top) {
         originLeft = left;
         originTop = top;
-        PolyvCommonLog.d(TAG,"left:"+left+"  top:"+top);
+        PolyvCommonLog.d(TAG, "left:" + left + "  top:" + top);
     }
 
     @Override
@@ -116,12 +116,12 @@ public class PolyvTouchContainerView extends FrameLayout {
         } else {
             return;
         }
-        PolyvCommonLog.d(TAG,"left ;"+layoutParams.leftMargin+"  width :"+getMeasuredWidth()+"  width :"+ScreenUtils.getScreenWidth());
+        PolyvCommonLog.d(TAG, "left ;" + layoutParams.leftMargin + "  width :" + getMeasuredWidth() + "  width :" + ScreenUtils.getScreenWidth());
         portraitLeft = layoutParams.leftMargin;
         portraitTop = layoutParams.topMargin;
 
         Log.d(TAG, "resetFloatViewLand: portraitLeft :" + portraitLeft + " portraitTop :"
-                + portraitTop+ "   width :" + getMeasuredWidth());
+                + portraitTop + "   width :" + getMeasuredWidth());
 
         layoutParams.leftMargin = ((ViewGroup) getParent()).getMeasuredWidth() - getMeasuredWidth();
         layoutParams.topMargin = 0;
@@ -140,12 +140,12 @@ public class PolyvTouchContainerView extends FrameLayout {
         } else {
             return;
         }
-        Log.d(TAG, "resetFloatViewPort: portraitLeft :" +portraitLeft+ " parent portraitTop :"
+        Log.d(TAG, "resetFloatViewPort: portraitLeft :" + portraitLeft + " parent portraitTop :"
                 + portraitTop + "   width :" + getMeasuredWidth());
-        if(portraitLeft + getMeasuredWidth() >= ScreenUtils.getScreenWidth()){
+        if (portraitLeft + getMeasuredWidth() >= ScreenUtils.getScreenWidth()) {
             rlp.leftMargin = originLeft;
             rlp.topMargin = originTop;
-        }else{
+        } else {
             rlp.leftMargin = portraitLeft;
             rlp.topMargin = portraitTop;
         }
@@ -157,28 +157,11 @@ public class PolyvTouchContainerView extends FrameLayout {
     protected void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         rotateTask.buildConfig(newConfig);
-        if(getHandler() != null){
+        if (getHandler() != null) {
             getHandler().removeCallbacks(rotateTask);
         }
         post(rotateTask);
 
-    }
-
-    class RotateTask implements Runnable {
-        public Configuration newConfig;
-
-        public void buildConfig(Configuration configuration){
-            newConfig = configuration;
-        }
-        @Override
-        public void run() {
-
-            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                resetFloatViewPort();
-            } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                resetFloatViewLand();
-            }
-        }
     }
 
     public void topSubviewTo(final int top) {
@@ -191,7 +174,7 @@ public class PolyvTouchContainerView extends FrameLayout {
                 }
                 beforeSoftLeft = rlp.leftMargin;
                 beforeSoftTop = rlp.topMargin;
-                if(rlp.topMargin+rlp.height < top){
+                if (rlp.topMargin + rlp.height < top) {
                     return;
                 }
 
@@ -239,5 +222,23 @@ public class PolyvTouchContainerView extends FrameLayout {
 
     public void setOriginTop(int originTop) {
         this.originTop = originTop;
+    }
+
+    class RotateTask implements Runnable {
+        public Configuration newConfig;
+
+        public void buildConfig(Configuration configuration) {
+            newConfig = configuration;
+        }
+
+        @Override
+        public void run() {
+
+            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                resetFloatViewPort();
+            } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                resetFloatViewLand();
+            }
+        }
     }
 }
